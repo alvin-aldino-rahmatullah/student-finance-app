@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -21,15 +20,17 @@ public class AuthRestController {
     @Autowired
     private AuthService authService;
 
+    // ===================================================
+    // REGISTRASI
+    // ===================================================
+
     @PostMapping("/daftar/mahasiswa")
     public ResponseEntity<Map<String, Object>> daftarMahasiswa(
             @RequestBody Map<String, String> body) {
 
         Mahasiswa mahasiswa = authService.daftarMahasiswa(
-            body.get("nama"),
-            body.get("noHP"),
-            body.get("email"),
-            body.get("password")
+            body.get("nama"), body.get("noHP"),
+            body.get("email"), body.get("password")
         );
 
         Map<String, Object> response = new HashMap<>();
@@ -49,9 +50,7 @@ public class AuthRestController {
             @RequestBody Map<String, String> body) {
 
         OrangTua orangTua = authService.daftarOrangTua(
-            body.get("nama"),
-            body.get("noHP"),
-            body.get("password")
+            body.get("nama"), body.get("noHP"), body.get("password")
         );
 
         Map<String, Object> response = new HashMap<>();
@@ -66,13 +65,16 @@ public class AuthRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // ===================================================
+    // LOGIN
+    // ===================================================
+
     @PostMapping("/login/mahasiswa")
     public ResponseEntity<Map<String, Object>> loginMahasiswa(
             @RequestBody Map<String, String> body) {
 
         Mahasiswa mahasiswa = authService.loginMahasiswa(
-            body.get("email"),
-            body.get("password")
+            body.get("email"), body.get("password")
         );
 
         Map<String, Object> response = new HashMap<>();
@@ -93,8 +95,7 @@ public class AuthRestController {
             @RequestBody Map<String, String> body) {
 
         OrangTua orangTua = authService.loginOrangTua(
-            body.get("noHP"),
-            body.get("password")
+            body.get("noHP"), body.get("password")
         );
 
         Map<String, Object> response = new HashMap<>();
@@ -109,32 +110,68 @@ public class AuthRestController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> semuaUser() {
-        return ResponseEntity.ok(authService.semuaUser());
-    }
+    // ===================================================
+    // MANAJEMEN USER (kelola akun sendiri)
+    // ===================================================
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<Map<String, Object>> userById(@PathVariable Long id) {
+    @GetMapping("/profil/{id}")
+    public ResponseEntity<Map<String, Object>> lihatProfil(@PathVariable Long id) {
         Optional<User> optional = authService.cariUserById(id);
         Map<String, Object> response = new HashMap<>();
         if (optional.isEmpty()) {
-            response.put("pesan", "User dengan ID " + id + " tidak ditemukan.");
+            response.put("pesan", "User tidak ditemukan.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
         response.put("data", optional.get());
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<Map<String, Object>> hapusUser(@PathVariable Long id) {
+    @PutMapping("/profil/{id}/edit")
+    public ResponseEntity<Map<String, Object>> editProfil(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+
+        User updated = authService.editProfil(
+            id, body.get("nama"), body.get("noHP"), body.get("email")
+        );
+
         Map<String, Object> response = new HashMap<>();
-        if (authService.cariUserById(id).isEmpty()) {
-            response.put("pesan", "User dengan ID " + id + " tidak ditemukan.");
+        if (updated == null) {
+            response.put("pesan", "User tidak ditemukan.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        authService.hapusUser(id);
-        response.put("pesan", "User berhasil dihapus.");
+        response.put("pesan", "Profil berhasil diupdate.");
+        response.put("data", updated);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/profil/{id}/ganti-password")
+    public ResponseEntity<Map<String, Object>> gantiPassword(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+
+        boolean berhasil = authService.gantiPassword(
+            id, body.get("passwordLama"), body.get("passwordBaru")
+        );
+
+        Map<String, Object> response = new HashMap<>();
+        if (!berhasil) {
+            response.put("pesan", "Password lama salah.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        response.put("pesan", "Password berhasil diubah.");
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/profil/{id}/hapus-akun")
+    public ResponseEntity<Map<String, Object>> hapusAkun(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        if (authService.cariUserById(id).isEmpty()) {
+            response.put("pesan", "User tidak ditemukan.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        authService.hapusAkun(id);
+        response.put("pesan", "Akun berhasil dihapus.");
         return ResponseEntity.ok(response);
     }
 }

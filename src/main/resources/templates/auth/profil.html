@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - Aplikasi Keuangan Mahasiswa</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+        .navbar {
+            background: #2b6cb0; color: white;
+            padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .navbar h2 { font-size: 1.1rem; }
+        .navbar a {
+            color: white; text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; margin-left: 0.5rem;
+        }
+        .navbar a:hover { background: rgba(255,255,255,0.35); }
+        .container { max-width: 600px; margin: 2rem auto; padding: 0 1.5rem; }
+        .card {
+            background: white; border-radius: 12px;
+            padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+        .card h3 { font-size: 1rem; color: #2d3748; margin-bottom: 1.2rem;
+                   padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0; }
+        label { display: block; font-size: 0.85rem; font-weight: 600;
+                color: #4a5568; margin-bottom: 0.3rem; }
+        input {
+            width: 100%; padding: 0.65rem 0.9rem;
+            border: 1px solid #e2e8f0; border-radius: 8px;
+            font-size: 0.95rem; margin-bottom: 1rem;
+        }
+        input:focus { outline: none; border-color: #4299e1; }
+        .btn {
+            padding: 0.65rem 1.5rem; border: none;
+            border-radius: 8px; font-size: 0.9rem;
+            font-weight: 600; cursor: pointer;
+        }
+        .btn-primary { background: #4299e1; color: white; }
+        .btn-primary:hover { background: #3182ce; }
+        .btn-danger { background: #e53e3e; color: white; }
+        .btn-danger:hover { background: #c53030; }
+        .alert-error {
+            background: #fff5f5; border: 1px solid #feb2b2;
+            color: #c53030; border-radius: 8px;
+            padding: 0.75rem; margin-bottom: 1rem; font-size: 0.9rem;
+        }
+        .alert-sukses {
+            background: #f0fff4; border: 1px solid #9ae6b4;
+            color: #276749; border-radius: 8px;
+            padding: 0.75rem; margin-bottom: 1rem; font-size: 0.9rem;
+        }
+        .hapus-section { text-align: center; padding-top: 0.5rem; }
+        .hapus-section p { font-size: 0.85rem; color: #718096; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h2>👤 Profil Saya</h2>
+    <div>
+        <a th:href="@{/dashboard}">← Dashboard</a>
+        <a th:href="@{/auth/logout}">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- EDIT PROFIL -->
+    <div class="card">
+        <h3>✏️ Edit Profil</h3>
+
+        <div class="alert-error" th:if="${error}" th:text="${error}"></div>
+        <div class="alert-sukses" th:if="${sukses}" th:text="${sukses}"></div>
+
+        <form th:action="@{/auth/profil/edit}" method="post">
+            <label>Nama Lengkap</label>
+            <input type="text" name="nama" th:value="${user.nama}" required />
+
+            <label>Nomor HP</label>
+            <input type="text" name="noHP"

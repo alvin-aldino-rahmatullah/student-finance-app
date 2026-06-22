@@ -1,22 +1,270 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="id">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Aplikasi Keuangan Mahasiswa</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .card { background: white; border-radius: 12px; padding: 2rem; max-width: 400px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
-        h1 { color: #1a202c; margin-bottom: 0.5rem; }
-        p { color: #718096; margin-bottom: 1.5rem; }
-        a { display: inline-block; padding: 0.65rem 1.5rem; background: #e53e3e; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; }
-        a:hover { background: #c53030; }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f0f4f8;
+      }
+
+      /* NAVBAR */
+      .navbar {
+        background: #2b6cb0;
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .navbar h2 {
+        font-size: 1.1rem;
+      }
+      .navbar span {
+        font-size: 0.9rem;
+        opacity: 0.85;
+      }
+      .navbar a {
+        color: white;
+        text-decoration: none;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.4rem 1rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        margin-left: 1rem;
+      }
+      .navbar a:hover {
+        background: rgba(255, 255, 255, 0.35);
+      }
+
+      /* KONTEN */
+      .container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+      }
+
+      /* KARTU RINGKASAN */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      }
+      .card .label {
+        font-size: 0.8rem;
+        color: #718096;
+        margin-bottom: 0.5rem;
+      }
+      .card .nilai {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1a202c;
+      }
+      .card.saldo .nilai {
+        color: #2b6cb0;
+      }
+      .card.masuk .nilai {
+        color: #276749;
+      }
+      .card.keluar .nilai {
+        color: #c53030;
+      }
+
+      /* NAVIGASI MODUL */
+      .nav-modul {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+      .nav-modul a {
+        background: white;
+        border-radius: 12px;
+        padding: 1.2rem;
+        text-align: center;
+        text-decoration: none;
+        color: #2d3748;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+      }
+      .nav-modul a:hover {
+        border-color: #4299e1;
+        color: #2b6cb0;
+      }
+      .nav-modul a .icon {
+        font-size: 1.8rem;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      /* TABEL TRANSAKSI */
+      .section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 1rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      }
+      th {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        font-size: 0.8rem;
+        padding: 0.75rem 1rem;
+        text-align: left;
+      }
+      td {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        color: #4a5568;
+        border-top: 1px solid #f0f4f8;
+      }
+      .badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .badge.masuk {
+        background: #f0fff4;
+        color: #276749;
+      }
+      .badge.keluar {
+        background: #fff5f5;
+        color: #c53030;
+      }
+      .jumlah.masuk {
+        color: #276749;
+        font-weight: 600;
+      }
+      .jumlah.keluar {
+        color: #c53030;
+        font-weight: 600;
+      }
     </style>
-</head>
-<body>
-<div class="card">
-    <h1>Halo, <span th:text="${session.userLogin.nama}">User</span>!</h1>
-    <p>Kamu berhasil login sebagai <strong th:text="${session.tipeUser}">-</strong></p>
-    <a th:href="@{/auth/logout}">Logout</a>
-</div>
-</body>
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+      <div>
+        <h2>💰 Keuangan Mahasiswa</h2>
+        <span>Selamat datang, <strong th:text="${nama}">User</strong></span>
+      </div>
+      <div>
+        <a th:href="@{/auth/profil}">Profil Saya</a>
+        <a th:href="@{/auth/logout}">Logout</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- KARTU RINGKASAN SALDO -->
+      <div class="cards">
+        <div class="card saldo">
+          <div class="label">Saldo Saat Ini</div>
+          <div
+            class="nilai"
+            th:text="'Rp ' + ${#numbers.formatInteger(saldo, 1, 'COMMA')}"
+          >
+            Rp 0
+          </div>
+        </div>
+        <div class="card masuk">
+          <div class="label">Total Pemasukan Bulan Ini</div>
+          <div
+            class="nilai"
+            th:text="'Rp ' + ${#numbers.formatInteger(totalPemasukan, 1, 'COMMA')}"
+          >
+            Rp 0
+          </div>
+        </div>
+        <div class="card keluar">
+          <div class="label">Total Pengeluaran Bulan Ini</div>
+          <div
+            class="nilai"
+            th:text="'Rp ' + ${#numbers.formatInteger(totalPengeluaran, 1, 'COMMA')}"
+          >
+            Rp 0
+          </div>
+        </div>
+      </div>
+
+      <!-- NAVIGASI MODUL -->
+      <div class="nav-modul">
+        <a href="#">
+          <span class="icon">💼</span>
+          Kelola Transaksi
+        </a>
+        <a href="#">
+          <span class="icon">📋</span>
+          Riwayat Transaksi
+        </a>
+        <a href="#">
+          <span class="icon">📊</span>
+          Statistik & Grafik
+        </a>
+        <a href="#">
+          <span class="icon">📄</span>
+          Laporan
+        </a>
+      </div>
+
+      <!-- TABEL TRANSAKSI TERAKHIR -->
+      <div class="section-title">Transaksi Terakhir</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Keterangan</th>
+            <th>Jenis</th>
+            <th>Jumlah</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="t : ${transaksiTerakhir}">
+            <td th:text="${t['tanggal']}">-</td>
+            <td th:text="${t['keterangan']}">-</td>
+            <td>
+              <span
+                class="badge"
+                th:classappend="${t['jenis'] == 'PEMASUKAN'} ? 'masuk' : 'keluar'"
+                th:text="${t['jenis']}"
+                >-</span
+              >
+            </td>
+            <td
+              class="jumlah"
+              th:classappend="${t['jenis'] == 'PEMASUKAN'} ? 'masuk' : 'keluar'"
+              th:text="'Rp ' + ${#numbers.formatInteger(t['jumlah'], 1, 'COMMA')}"
+            >
+              -
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
 </html>

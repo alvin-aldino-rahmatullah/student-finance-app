@@ -2,6 +2,7 @@ package com.financetracker.student_finance_app.controller;
 
 import com.financetracker.student_finance_app.model.Mahasiswa;
 import com.financetracker.student_finance_app.model.OrangTua;
+import com.financetracker.student_finance_app.model.User;
 import com.financetracker.student_finance_app.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ public class AuthController {
 
     @Autowired
     private AuthService authService;
+
+    // LOGIN
 
     @GetMapping("/login")
     public String halamanLogin() {
@@ -38,7 +41,6 @@ public class AuthController {
             }
             session.setAttribute("userLogin", mahasiswa);
             session.setAttribute("tipeUser", "mahasiswa");
-            return "redirect:/dashboard";
 
         } else if (tipeUser.equals("orangtua")) {
             OrangTua orangTua = authService.loginOrangTua(identifier, password);
@@ -48,12 +50,16 @@ public class AuthController {
             }
             session.setAttribute("userLogin", orangTua);
             session.setAttribute("tipeUser", "orangtua");
-            return "redirect:/dashboard";
+
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Tipe pengguna tidak valid.");
+            return "redirect:/auth/login";
         }
 
-        redirectAttributes.addFlashAttribute("error", "Tipe pengguna tidak valid.");
-        return "redirect:/auth/login";
+        return "redirect:/dashboard";
     }
+
+    // REGISTRASI
 
     @GetMapping("/daftar")
     public String halamanDaftar() {
@@ -93,26 +99,74 @@ public class AuthController {
         return "redirect:/auth/login";
     }
 
+    // LOGOUT
+
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/auth/login";
     }
 
-    @GetMapping("/users")
-    public String daftarUser(Model model, HttpSession session) {
+
+    // MANAJEMEN USER (kelola akun sendiri)
+
+    @GetMapping("/profil")
+    public String halamanProfil(HttpSession session, Model model) {
         if (session.getAttribute("userLogin") == null) {
             return "redirect:/auth/login";
         }
-        model.addAttribute("users", authService.semuaUser());
-        return "auth/users";
+        User user = (User) session.getAttribute("userLogin");
+        model.addAttribute("user", user);
+        return "auth/profil";
     }
 
-    @PostMapping("/users/hapus/{id}")
-    public String hapusUser(@PathVariable Long id,
-                            RedirectAttributes redirectAttributes) {
-        authService.hapusUser(id);
-        redirectAttributes.addFlashAttribute("sukses", "User berhasil dihapus.");
-        return "redirect:/auth/users";
+    @PostMapping("/profil/edit")
+    public String editProfil(
+            @RequestParam String nama,
+            @RequestParam String noHP,
+            @RequestParam(required = false) String email,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        User user = (User) session.getAttribute("userLogin");
+        User updated = authService.editProfil(user.getId(), nama, noHP, email);
+
+        if (updated == null) {
+            redirectAttributes.addFlashAttribute("error", "Gagal update profil.");
+            return "redirect:/auth/profil";
+        }
+
+        // Update session dengan data terbaru
+        session.setAttribute("userLogin", updated);
+        redirectAttributes.addFlashAttribute("sukses", "Profil berhasil diupdate.");
+        return "redirect:/auth/profil";
+    }
+
+    @PostMapping("/profil/ganti-password")
+    public String gantiPassword(
+            @RequestParam String passwordLama,
+            @RequestParam String passwordBaru,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        User user = (User) session.getAttribute("userLogin");
+        boolean berhasil = authService.gantiPassword(user.getId(), passwordLama, passwordBaru);
+
+        if (!berhasil) {
+            redirectAttributes.addFlashAttribute("errorPassword", "Password lama salah.");
+            return "redirect:/auth/profil";
+        }
+
+        redirectAttributes.addFlashAttribute("suksesPassword", "Password berhasil diubah.");
+        return "redirect:/auth/profil";
+    }
+
+    @PostMapping("/profil/hapus-akun")
+    public String hapusAkun(HttpSession session) {
+        User user = (User) session.getAttribute("userLogin");
+        authService.hapusAkun(user.getId());
+        session.invalidate();
+        return "redirect:/auth/login";
     }
 }
