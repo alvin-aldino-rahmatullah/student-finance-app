@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Aplikasi Keuangan Mahasiswa</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .card { background: white; border-radius: 12px; padding: 2rem; max-width: 400px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
+        h1 { color: #1a202c; margin-bottom: 0.5rem; }
+        p { color: #718096; margin-bottom: 1.5rem; }
+        a { display: inline-block; padding: 0.65rem 1.5rem; background: #e53e3e; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; }
+        a:hover { background: #c53030; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Halo, <span th:text="${session.userLogin.nama}">User</span>!</h1>
+    <p>Kamu berhasil login sebagai <strong th:text="${session.tipeUser}">-</strong></p>
+    <a th:href="@{/auth/logout}">Logout</a>
+</div>
+</body>
+</html>

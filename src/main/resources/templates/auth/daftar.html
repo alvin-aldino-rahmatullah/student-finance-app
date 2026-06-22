@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar - Aplikasi Keuangan Mahasiswa</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 { font-size: 1.5rem; color: #1a202c; margin-bottom: 0.25rem; }
+        p.sub { color: #718096; font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .tab {
+            flex: 1; padding: 0.6rem;
+            border: 2px solid #e2e8f0; border-radius: 8px;
+            background: white; cursor: pointer;
+            font-weight: 600; font-size: 0.9rem; color: #718096;
+        }
+        .tab.active { border-color: #4299e1; color: #4299e1; background: #ebf8ff; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; color: #4a5568; margin-bottom: 0.3rem; }
+        input {
+            width: 100%; padding: 0.65rem 0.9rem;
+            border: 1px solid #e2e8f0; border-radius: 8px;
+            font-size: 0.95rem; margin-bottom: 1rem;
+        }
+        input:focus { outline: none; border-color: #4299e1; }
+        button[type="submit"] {
+            width: 100%; padding: 0.75rem;
+            background: #4299e1; color: white;
+            border: none; border-radius: 8px;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+        }
+        button[type="submit"]:hover { background: #3182ce; }
+        .alert-error {
+            background: #fff5f5; border: 1px solid #feb2b2;
+            color: #c53030; border-radius: 8px;
+            padding: 0.75rem; margin-bottom: 1rem; font-size: 0.9rem;
+        }
+        .alert-sukses {
+            background: #f0fff4; border: 1px solid #9ae6b4;
+            color: #276749; border-radius: 8px;
+            padding: 0.75rem; margin-bottom: 1rem; font-size: 0.9rem;
+        }
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+        .link { text-align: center; margin-top: 1rem; font-size: 0.9rem; color: #718096; }
+        .link a { color: #4299e1; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Buat Akun</h1>
+    <p class="sub">Pilih jenis akun yang ingin didaftarkan</p>
+
+    <div class="alert-error" th:if="${error}" th:text="${error}"></div>
+    <div class="alert-sukses" th:if="${sukses}" th:text="${sukses}"></div>
+
+    <div class="tabs">
+        <button type="button" class="tab active" onclick="tampilForm('mahasiswa', this)">Mahasiswa</button>
+        <button type="button" class="tab" onclick="tampilForm('orangtua', this)">Orang Tua</button>
+    </div>
+
+    <!-- Form Mahasiswa -->
+    <div id="form-mahasiswa" class="form-section active">
+        <form th:action="@{/auth/daftar/mahasiswa}" method="post">
+            <label>Nama Lengkap</label>
+            <input type="text" name="nama" placeholder="Nama sesuai KTP" required />
+
+            <label>Nomor HP</label>
+            <input type="text" name="noHP" placeholder="08123456789" required />
+
+            <label>Email Kampus</label>
+            <input type="email" name="email" placeholder="email@student.ac.id" required />
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Minimal 8 karakter" required />
+
+            <button type="submit">Daftar sebagai Mahasiswa</button>
+        </form>
+    </div>
+
+    <!-- Form Orang Tua -->
+    <div id="form-orangtua" class="form-section">
+        <form th:action="@{/auth/daftar/orangtua}" method="post">
+            <label>Nama Lengkap</label>
+            <input type="text" name="nama" placeholder="Nama orang tua" required />
+
+            <label>Nomor HP (dipakai untuk login)</label>
+            <input type="text" name="noHP" placeholder="08123456789" required />
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Minimal 8 karakter" required />
+
+            <button type="submit">Daftar sebagai Orang Tua</button>
+        </form>
+    </div>
+
+    <div class="link">
+        Sudah punya akun? <a th:href="@{/auth/login}">Login di sini</a>
+    </div>
+</div>
+
+<script>
+    function tampilForm(tipe, el) {
+        document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('form-' + tipe).classList.add('active');
+        el.classList.add('active');
+    }
+</script>
+</body>
+</html>
