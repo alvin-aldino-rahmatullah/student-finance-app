@@ -19,7 +19,7 @@ public class LaporanController {
     public String getLaporan() {
 
         Mahasiswa mahasiswa = new Mahasiswa(
-                "Trisna Kusuma",
+                "Trisna Kusuma Ramadhany",
                 "08123456789",
                 "123456",
                 "trisna@gmail.com"
