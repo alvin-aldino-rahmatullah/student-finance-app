@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Riwayat Transaksi</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", sans-serif; background: #f0f4f8; }
+    .navbar { background: #2b6cb0; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .navbar h2 { font-size: 1.1rem; }
+    .navbar a { color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; margin-left: 0.5rem; }
+    .container { max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem; }
+    .page-title { font-size: 1.3rem; font-weight: 700; color: #2d3748; margin-bottom: 1rem; }
+    .filter-bar { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; }
+    .filter-bar a {
+      padding: 0.5rem 1.2rem; border-radius: 8px; text-decoration: none;
+      font-size: 0.85rem; font-weight: 600; border: 2px solid #e2e8f0; color: #4a5568;
+    }
+    .filter-bar a.active { background: #3182ce; color: white; border-color: #3182ce; }
+    .filter-bar a:hover:not(.active) { border-color: #4299e1; color: #2b6cb0; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    th { background: #ebf8ff; color: #2b6cb0; font-size: 0.8rem; padding: 0.75rem 1rem; text-align: left; }
+    td { padding: 0.75rem 1rem; font-size: 0.9rem; color: #4a5568; border-top: 1px solid #f0f4f8; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .badge.masuk  { background: #f0fff4; color: #276749; }
+    .badge.keluar { background: #fff5f5; color: #c53030; }
+    .jumlah.masuk  { color: #276749; font-weight: 600; }
+    .jumlah.keluar { color: #c53030; font-weight: 600; }
+    .nav-back { display: inline-block; margin-bottom: 1rem; color: #2b6cb0; text-decoration: none; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+<div class="navbar">
+  <div><h2>💰 Keuangan Mahasiswa</h2><span>Riwayat Transaksi</span></div>
+  <div>
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/transaksi/statistik}">Statistik</a>
+    <a th:href="@{/auth/logout}">Logout</a>
+  </div>
+</div>
+<div class="container">
+  <a class="nav-back" th:href="@{/dashboard}">← Dashboard</a>
+  <div class="page-title">📋 Riwayat Transaksi</div>
+
+  <div class="filter-bar">
+    <a th:href="@{/transaksi/riwayat(filter='semua')}"   th:classappend="${filter == 'semua'}   ? ' active' : ''">Semua</a>
+    <a th:href="@{/transaksi/riwayat(filter='mingguan')}" th:classappend="${filter == 'mingguan'} ? ' active' : ''">7 Hari Terakhir</a>
+    <a th:href="@{/transaksi/riwayat(filter='bulanan')}"  th:classappend="${filter == 'bulanan'}  ? ' active' : ''">Bulan Ini</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jenis</th><th>Jumlah</th></tr>
+    </thead>
+    <tbody>
+      <tr th:each="t : ${transaksiList}">
+        <td th:text="${t.tanggal}">-</td>
+        <td th:text="${t.kategori != null ? t.kategori : '-'}">-</td>
+        <td th:text="${t.catatan != null ? t.catatan : '-'}">-</td>
+        <td><span class="badge" th:classappend="${t.jenis.name()=='PEMASUKAN'}?'masuk':'keluar'" th:text="${t.jenis}">-</span></td>
+        <td class="jumlah" th:classappend="${t.jenis.name()=='PEMASUKAN'}?'masuk':'keluar'"
+            th:text="'Rp ' + ${#numbers.formatInteger(t.jumlah, 1, 'COMMA')}">-</td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(transaksiList)}">
+        <td colspan="5" style="text-align:center;color:#a0aec0;padding:2rem">Tidak ada transaksi di periode ini</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
