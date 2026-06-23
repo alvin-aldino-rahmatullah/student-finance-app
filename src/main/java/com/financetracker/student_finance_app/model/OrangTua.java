@@ -12,8 +12,17 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OrangTua extends User {
 
+    // No HP mahasiswa yang terdaftar (untuk link ke akun mahasiswa)
+    @Column(name = "no_hp_mahasiswa", length = 20)
+    private String noHPMahasiswa;
+
     public OrangTua(String nama, String noHP, String password) {
         super(nama, noHP, password);
+    }
+
+    public OrangTua(String nama, String noHP, String password, String noHPMahasiswa) {
+        super(nama, noHP, password);
+        this.noHPMahasiswa = noHPMahasiswa;
     }
 
     @Override

@@ -15,16 +15,14 @@
     .filter-bar { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; align-items: center; }
     .filter-bar a { padding: 0.5rem 1.2rem; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; border: 2px solid #e2e8f0; color: #4a5568; }
     .filter-bar a.active { background: #3182ce; color: white; border-color: #3182ce; }
-    /* Kartu ringkasan */
     .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-    .sum-card { background: white; border-radius: 12px; padding: 1.2rem 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+    .sum-card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
     .sum-card .lbl { font-size: 0.72rem; color: #718096; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.4rem; }
     .sum-card .val { font-size: 1.2rem; font-weight: 700; }
     .sum-card.masuk .val  { color: #276749; }
     .sum-card.keluar .val { color: #c53030; }
     .sum-card.selisih .val { color: #2b6cb0; }
     .sum-card.saldo .val  { color: #1a202c; }
-    /* Tabel */
     table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 1.5rem; }
     th { background: #ebf8ff; color: #2b6cb0; font-size: 0.8rem; padding: 0.75rem 1rem; text-align: left; }
     td { padding: 0.75rem 1rem; font-size: 0.9rem; color: #4a5568; border-top: 1px solid #f0f4f8; }
@@ -33,26 +31,32 @@
     .badge.keluar { background: #fff5f5; color: #c53030; }
     .jumlah.masuk  { color: #276749; font-weight: 600; }
     .jumlah.keluar { color: #c53030; font-weight: 600; }
-    /* Tombol kirim */
-    .kirim-section { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: space-between; }
-    .kirim-section p { color: #4a5568; font-size: 0.9rem; }
-    .btn-kirim { background: #276749; color: white; border: none; padding: 0.65rem 1.5rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-    .btn-kirim:hover { background: #22543d; }
+    /* Kirim section */
+    .kirim-box { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 1.5rem; }
+    .kirim-box h3 { font-size: 0.95rem; font-weight: 700; color: #2b6cb0; margin-bottom: 1rem; }
+    .kirim-row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
+    .form-group { flex: 1; min-width: 200px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #4a5568; margin-bottom: 0.4rem; }
+    .form-group input { width: 100%; padding: 0.6rem 0.9rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem; outline: none; }
+    .form-group input:focus { border-color: #4299e1; }
+    .btn { padding: 0.65rem 1.3rem; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .btn-green { background: #276749; color: white; }
+    .btn-green:hover { background: #22543d; }
+    .btn-blue  { background: #3182ce; color: white; }
+    .btn-blue:hover  { background: #2b6cb0; }
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 1rem 0; }
     .alert { padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem; }
     .alert.success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
     .alert.error   { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
-    .nav-back { display: inline-block; margin-bottom: 1rem; color: #2b6cb0; text-decoration: none; font-size: 0.9rem; }
     .meta { color: #718096; font-size: 0.82rem; margin-bottom: 1.5rem; }
+    .nav-back { display: inline-block; margin-bottom: 1rem; color: #2b6cb0; text-decoration: none; font-size: 0.9rem; }
     .empty { text-align:center; padding: 2rem; color: #a0aec0; font-size: 0.9rem; }
-    @media print {
-      .navbar, .filter-bar, .kirim-section, .nav-back { display: none !important; }
-      body { background: white; }
-    }
+    @media print { .navbar, .filter-bar, .kirim-box, .nav-back { display: none !important; } body { background: white; } }
   </style>
 </head>
 <body>
 <div class="navbar">
-  <div><h2>💰 Keuangan Mahasiswa</h2><span>Laporan Keuangan</span></div>
+  <div><h2>💰 Keuangan Mahasiswa</h2></div>
   <div>
     <a th:href="@{/dashboard}">Dashboard</a>
     <a href="javascript:window.print()">🖨️ Cetak</a>
@@ -67,7 +71,6 @@
   <div class="alert success" th:if="${sukses}" th:text="${sukses}"></div>
   <div class="alert error"   th:if="${error}"  th:text="${error}"></div>
 
-  <!-- Filter Periode -->
   <div class="filter-bar">
     <span style="font-size:0.85rem;color:#4a5568;font-weight:600">Periode:</span>
     <a th:href="@{/laporan(periode='bulanan')}"  th:classappend="${periode=='bulanan'} ? ' active' : ''">Bulan Ini</a>
@@ -76,7 +79,7 @@
 
   <div class="meta">
     📅 Periode: <strong th:text="${laporan.periode}">-</strong> &nbsp;|&nbsp;
-    Digenerate pada: <strong th:text="${laporan.tanggalGenerate}">-</strong>
+    Digenerate: <strong th:text="${laporan.tanggalGenerate}">-</strong>
   </div>
 
   <!-- Ringkasan -->
@@ -99,39 +102,57 @@
     </div>
   </div>
 
-  <!-- Tabel Detail Transaksi -->
+  <!-- Tabel -->
   <table>
-    <thead>
-      <tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jenis</th><th>Jumlah</th></tr>
-    </thead>
+    <thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jenis</th><th>Jumlah</th></tr></thead>
     <tbody>
       <tr th:each="t : ${laporan.transaksiList}">
         <td th:text="${t.tanggal}">-</td>
         <td th:text="${t.kategori != null ? t.kategori : '-'}">-</td>
         <td th:text="${t.catatan  != null ? t.catatan  : '-'}">-</td>
-        <td>
-          <span class="badge"
-                th:classappend="${t.jenis.name()=='PEMASUKAN'} ? 'masuk' : 'keluar'"
-                th:text="${t.jenis}">-</span>
-        </td>
-        <td class="jumlah"
-            th:classappend="${t.jenis.name()=='PEMASUKAN'} ? 'masuk' : 'keluar'"
+        <td><span class="badge" th:classappend="${t.jenis.name()=='PEMASUKAN'}?'masuk':'keluar'" th:text="${t.jenis}">-</span></td>
+        <td class="jumlah" th:classappend="${t.jenis.name()=='PEMASUKAN'}?'masuk':'keluar'"
             th:text="'Rp ' + ${#numbers.formatInteger(t.jumlah, 1, 'COMMA')}">-</td>
       </tr>
       <tr th:if="${#lists.isEmpty(laporan.transaksiList)}">
-        <td colspan="5" class="empty">Tidak ada transaksi di periode ini</td>
+        <td colspan="5" class="empty">Tidak ada transaksi di periode ini.</td>
       </tr>
     </tbody>
   </table>
 
-  <!-- Kirim ke Orang Tua -->
-  <div class="kirim-section">
-    <p>📲 Kirim laporan ini ke orang tua melalui nomor HP terdaftar?</p>
-    <form th:action="@{/laporan/kirim}" method="post">
+  <!-- KIRIM KE WA -->
+  <div class="kirim-box">
+    <h3>📲 Kirim Laporan ke WhatsApp Orang Tua</h3>
+
+    <!-- Kirim otomatis ke orang tua terdaftar -->
+    <p style="font-size:0.85rem;color:#4a5568;margin-bottom:0.8rem">
+      Kirim otomatis ke orang tua yang sudah mendaftar dengan No HP mahasiswa kamu:
+    </p>
+    <form th:action="@{/laporan/kirim}" method="post" style="margin-bottom:0.5rem">
       <input type="hidden" name="periode" th:value="${periode}"/>
-      <button type="submit" class="btn-kirim">Kirim ke Orang Tua</button>
+      <button type="submit" class="btn btn-green">📤 Kirim ke Orang Tua Terdaftar</button>
+    </form>
+
+    <hr class="divider"/>
+
+    <!-- Kirim manual ke nomor tertentu -->
+    <p style="font-size:0.85rem;color:#4a5568;margin-bottom:0.8rem">
+      Atau kirim ke nomor WhatsApp lain secara manual:
+    </p>
+    <form th:action="@{/laporan/kirim-manual}" method="post">
+      <input type="hidden" name="periode" th:value="${periode}"/>
+      <div class="kirim-row">
+        <div class="form-group">
+          <label>Nomor WhatsApp Tujuan</label>
+          <input type="text" name="noHP"
+                 th:value="${noHPMahasiswa}"
+                 placeholder="Contoh: 08123456789"/>
+        </div>
+        <button type="submit" class="btn btn-blue">📨 Kirim ke Nomor Ini</button>
+      </div>
     </form>
   </div>
+
 </div>
 </body>
 </html>

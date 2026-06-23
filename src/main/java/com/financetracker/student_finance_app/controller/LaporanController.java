@@ -27,22 +27,47 @@ public class LaporanController {
         model.addAttribute("laporan", laporan);
         model.addAttribute("periode", periode);
         model.addAttribute("nama", mhs.getNama());
+        model.addAttribute("noHPMahasiswa", mhs.getNoHP());
         return "laporan/index";
     }
 
+    // Kirim ke orang tua yang sudah terdaftar (auto)
     @PostMapping("/kirim")
-    public String kirimLaporan(HttpSession session,
-                               @RequestParam(defaultValue = "bulanan") String periode,
-                               RedirectAttributes ra) {
+    public String kirimOtomatis(HttpSession session,
+                                @RequestParam(defaultValue = "bulanan") String periode,
+                                RedirectAttributes ra) {
         Mahasiswa mhs = (Mahasiswa) session.getAttribute("userLogin");
         if (mhs == null) return "redirect:/auth/login";
 
-        try {
-            laporanService.kirimKeOrangTua(mhs.getId(), periode);
-            ra.addFlashAttribute("sukses",
-                    "Laporan berhasil dikirim ke orang tua! (No HP: " + mhs.getNoHP() + ")");
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", "Gagal mengirim laporan: " + e.getMessage());
+        boolean berhasil = laporanService.kirimKeOrangTuaWA(mhs.getId(), periode);
+        if (berhasil) {
+            ra.addFlashAttribute("sukses", "✅ Laporan berhasil dikirim ke WhatsApp orang tua!");
+        } else {
+            ra.addFlashAttribute("error",
+                "❌ Gagal kirim otomatis. Pastikan orang tua sudah daftar dengan No HP mahasiswa yang benar, atau kirim ke nomor manual.");
+        }
+        return "redirect:/laporan?periode=" + periode;
+    }
+
+    // Kirim ke nomor WA tertentu (manual)
+    @PostMapping("/kirim-manual")
+    public String kirimManual(HttpSession session,
+                              @RequestParam(defaultValue = "bulanan") String periode,
+                              @RequestParam String noHP,
+                              RedirectAttributes ra) {
+        Mahasiswa mhs = (Mahasiswa) session.getAttribute("userLogin");
+        if (mhs == null) return "redirect:/auth/login";
+
+        if (noHP == null || noHP.isBlank()) {
+            ra.addFlashAttribute("error", "Nomor HP tidak boleh kosong.");
+            return "redirect:/laporan?periode=" + periode;
+        }
+
+        boolean berhasil = laporanService.kirimKeNomorWA(mhs.getId(), periode, noHP);
+        if (berhasil) {
+            ra.addFlashAttribute("sukses", "✅ Laporan berhasil dikirim ke " + noHP + "!");
+        } else {
+            ra.addFlashAttribute("error", "❌ Gagal mengirim laporan. Cek token Fonnte & nomor HP.");
         }
         return "redirect:/laporan?periode=" + periode;
     }

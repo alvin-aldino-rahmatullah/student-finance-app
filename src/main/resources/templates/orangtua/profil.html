@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pengaturan Orang Tua</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", sans-serif; background: #f0f4f8; }
+    .navbar { background: #276749; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .navbar h2 { font-size: 1.1rem; }
+    .navbar a { color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; margin-left: 0.5rem; }
+    .container { max-width: 560px; margin: 2rem auto; padding: 0 1.5rem; }
+    .page-title { font-size: 1.2rem; font-weight: 700; color: #2d3748; margin-bottom: 1.5rem; }
+    .card { background: white; border-radius: 12px; padding: 1.8rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 1.5rem; }
+    .card h3 { font-size: 0.95rem; font-weight: 700; color: #276749; margin-bottom: 1rem; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #4a5568; margin-bottom: 0.4rem; }
+    .form-group input { width: 100%; padding: 0.65rem 1rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem; outline: none; }
+    .form-group input:focus { border-color: #48bb78; }
+    .form-group .hint { font-size: 0.75rem; color: #a0aec0; margin-top: 0.3rem; }
+    .btn { padding: 0.65rem 1.5rem; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #276749; color: white; }
+    .btn-primary:hover { background: #22543d; }
+    .alert { padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem; }
+    .alert.success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
+    .nav-back { display: inline-block; margin-bottom: 1rem; color: #276749; text-decoration: none; font-size: 0.9rem; }
+    .info-row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid #f0f4f8; font-size: 0.9rem; }
+    .info-row .lbl { color: #718096; }
+    .info-row .val { font-weight: 600; color: #2d3748; }
+  </style>
+</head>
+<body>
+<div class="navbar">
+  <div><h2>👨‍👩‍👧 Portal Orang Tua</h2></div>
+  <div>
+    <a th:href="@{/orangtua/dashboard}">Dashboard</a>
+    <a th:href="@{/auth/logout}">Logout</a>
+  </div>
+</div>
+
+<div class="container">
+  <a class="nav-back" th:href="@{/orangtua/dashboard}">← Dashboard</a>
+  <div class="page-title">⚙️ Pengaturan Akun</div>
+
+  <div class="alert success" th:if="${sukses}" th:text="${sukses}"></div>
+
+  <!-- Info Akun -->
+  <div class="card">
+    <h3>👤 Info Akun Saya</h3>
+    <div class="info-row">
+      <span class="lbl">Nama</span>
+      <span class="val" th:text="${orangTua.nama}">-</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">No HP Saya</span>
+      <span class="val" th:text="${orangTua.noHP}">-</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">No HP Mahasiswa</span>
+      <span class="val" th:text="${orangTua.noHPMahasiswa != null ? orangTua.noHPMahasiswa : 'Belum ditautkan'}">-</span>
+    </div>
+  </div>
+
+  <!-- Form Tautkan No HP Mahasiswa -->
+  <div class="card">
+    <h3>🔗 Tautkan Akun Mahasiswa</h3>
+    <p style="font-size:0.85rem;color:#718096;margin-bottom:1rem">
+      Masukkan No HP mahasiswa (anak kamu) yang sudah terdaftar di aplikasi ini.
+      Setelah ditautkan, kamu bisa memantau keuangan mereka.
+    </p>
+    <form th:action="@{/orangtua/profil/update}" method="post">
+      <div class="form-group">
+        <label>No HP Mahasiswa</label>
+        <input type="text" name="noHPMahasiswa"
+               th:value="${orangTua.noHPMahasiswa}"
+               placeholder="Contoh: 08123456789" required/>
+        <div class="hint">Harus sama persis dengan No HP yang didaftarkan mahasiswa.</div>
+      </div>
+      <button type="submit" class="btn btn-primary">Simpan</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

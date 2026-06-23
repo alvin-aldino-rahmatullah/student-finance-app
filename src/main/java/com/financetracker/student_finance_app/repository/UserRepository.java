@@ -16,7 +16,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<Mahasiswa> findByEmail(String email);
 
     @Query("SELECT o FROM OrangTua o WHERE o.noHP = :noHP")
-    Optional<OrangTua> findByNoHP(String noHP);
+    Optional<OrangTua> findOrangTuaByNoHP(String noHP);
+
+    @Query("SELECT m FROM Mahasiswa m WHERE m.noHP = :noHP")
+    Optional<Mahasiswa> findMahasiswaByNoHP(String noHP);
 
     @Query("SELECT COUNT(m) > 0 FROM Mahasiswa m WHERE m.email = :email")
     boolean existsByEmail(String email);
