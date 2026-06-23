@@ -1,17 +1,25 @@
 package com.financetracker.student_finance_app.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.financetracker.student_finance_app.model.Mahasiswa;
 import com.financetracker.student_finance_app.model.OrangTua;
 import com.financetracker.student_finance_app.model.User;
 import com.financetracker.student_finance_app.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -50,8 +58,11 @@ public class AuthRestController {
             @RequestBody Map<String, String> body) {
 
         OrangTua orangTua = authService.daftarOrangTua(
-            body.get("nama"), body.get("noHP"), body.get("password")
-        );
+    body.get("nama"),
+    body.get("noHP"),
+    body.get("password"),
+    body.get("noHPMahasiswa")
+);
 
         Map<String, Object> response = new HashMap<>();
         if (orangTua == null) {
