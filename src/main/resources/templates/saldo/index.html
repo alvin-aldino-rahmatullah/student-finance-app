@@ -3,57 +3,38 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pengaturan Orang Tua</title>
+  <title>Manajemen Saldo</title>
   <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
-<body class="portal">
-<div class="navbar portal">
-  <div class="brand"><h2>Portal Orang Tua</h2></div>
+<body>
+<div class="navbar">
+  <div class="brand"><h2>Keuangan Mahasiswa</h2></div>
   <div class="actions">
-    <a th:href="@{/orangtua/dashboard}">Dashboard</a>
+    <a th:href="@{/dashboard}">Dashboard</a>
     <a th:href="@{/auth/logout}">Logout</a>
   </div>
 </div>
-
 <div class="container narrow">
-  <a class="nav-back" th:href="@{/orangtua/dashboard}">← Dashboard</a>
-  <div class="page-title">Pengaturan Akun</div>
+  <a class="nav-back" th:href="@{/dashboard}">← Dashboard</a>
+  <div class="page-title">Manajemen Saldo</div>
 
   <div class="alert success" th:if="${sukses}" th:text="${sukses}"></div>
+  <div class="alert error"   th:if="${error}"  th:text="${error}"></div>
 
-  <!-- Info Akun -->
-  <div class="card" style="margin-bottom: 1.5rem;">
-    <h3>Info Akun Saya</h3>
-    <div class="info-row">
-      <span class="lbl">Nama</span>
-      <span class="val" th:text="${orangTua.nama}">-</span>
-    </div>
-    <div class="info-row">
-      <span class="lbl">No HP Saya</span>
-      <span class="val" th:text="${orangTua.noHP}">-</span>
-    </div>
-    <div class="info-row">
-      <span class="lbl">No HP Mahasiswa</span>
-      <span class="val" th:text="${orangTua.noHPMahasiswa != null ? orangTua.noHPMahasiswa : 'Belum ditautkan'}">-</span>
-    </div>
+  <div class="saldo-box">
+    <div class="label">Saldo Saat Ini</div>
+    <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(saldo, 1, 'COMMA')}">Rp 0</div>
   </div>
 
-  <!-- Form Tautkan No HP Mahasiswa -->
   <div class="card form-card">
-    <h3>Tautkan Akun Mahasiswa</h3>
-    <p style="font-size:0.85rem;color:var(--ink-soft);margin-bottom:1rem">
-      Masukkan No HP mahasiswa (anak kamu) yang sudah terdaftar di aplikasi ini.
-      Setelah ditautkan, kamu bisa memantau keuangan mereka.
-    </p>
-    <form th:action="@{/orangtua/profil/update}" method="post">
+    <h3>Tambah Saldo</h3>
+    <form th:action="@{/saldo/tambah}" method="post">
       <div class="form-group">
-        <label>No HP Mahasiswa</label>
-        <input type="text" name="noHPMahasiswa"
-               th:value="${orangTua.noHPMahasiswa}"
-               placeholder="Contoh: 08123456789" required/>
-        <div class="hint">Harus sama persis dengan No HP yang didaftarkan mahasiswa.</div>
+        <label>Jumlah yang ingin ditambahkan (Rp)</label>
+        <input type="number" name="jumlah" min="1000" step="1000"
+               placeholder="Contoh: 500000" required/>
       </div>
-      <button type="submit" class="btn btn-blue">Simpan</button>
+      <button type="submit" class="btn btn-primary btn-block">Tambah Saldo</button>
     </form>
   </div>
 </div>

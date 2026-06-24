@@ -1,84 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Profil - Aplikasi Keuangan Mahasiswa</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}"/>
-</head>
-<body>
-  <div class="navbar">
-    <div class="brand"><h2>Profil Saya</h2></div>
-    <div class="actions">
-      <a th:href="@{/dashboard}">Dashboard</a>
-      <a th:href="@{/auth/logout}">Logout</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Laporan Keuangan</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="brand"><h2>Keuangan Mahasiswa</h2></div>
+      <div class="actions">
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a href="javascript:window.print()">Cetak</a>
+        <a th:href="@{/auth/logout}">Logout</a>
+      </div>
     </div>
-  </div>
 
-  <div class="container narrow">
-    <!-- EDIT PROFIL -->
-    <div class="card form-card" style="margin-top: 2rem;">
-      <h3>Edit Profil</h3>
+    <div class="container medium">
+      <a class="nav-back" th:href="@{/dashboard}">← Dashboard</a>
+      <div class="page-title">
+        Laporan Keuangan — <span class="sub" th:text="${nama}">User</span>
+      </div>
 
-      <div class="alert error" th:if="${error}" th:text="${error}"></div>
       <div class="alert success" th:if="${sukses}" th:text="${sukses}"></div>
+      <div class="alert error" th:if="${error}" th:text="${error}"></div>
 
-      <form th:action="@{/auth/profil/edit}" method="post">
-        <div class="form-group">
-          <label>Nama Lengkap</label>
-          <input type="text" name="nama" th:value="${user.nama}" required />
+      <div class="filter-bar">
+        <span class="label">Periode:</span>
+        <a
+          th:href="@{/laporan(periode='bulanan')}"
+          th:classappend="${periode=='bulanan'} ? ' active' : ''"
+          >Bulan Ini</a
+        >
+        <a
+          th:href="@{/laporan(periode='mingguan')}"
+          th:classappend="${periode=='mingguan'} ? ' active' : ''"
+          >7 Hari Terakhir</a
+        >
+      </div>
+
+      <div class="meta">
+        Periode: <strong th:text="${laporan.periode}">-</strong> &nbsp;|&nbsp;
+        Digenerate: <strong th:text="${laporan.tanggalGenerate}">-</strong>
+      </div>
+
+      <!-- Ringkasan -->
+      <div class="cards cols-4">
+        <div class="stat-card masuk">
+          <div class="label">Total Pemasukan</div>
+          <div
+            class="nilai"
+            th:text="'Rp ' + ${#numbers.formatInteger(laporan.totalPemasukan, 1, 'COMMA')}"
+          >
+            Rp 0
+          </div>
         </div>
-
-        <div class="form-group">
-          <label>Nomor HP</label>
-          <input type="text" name="noHP" th:value="${user.noHP}" required />
+        <div class="stat-card keluar">
+          <div class="label">Total Pengeluaran</div>
+          <div
+            class="nilai"
+            th:text="'Rp ' + ${#numbers.formatInteger(laporan.totalPengeluaran, 1, 'COMMA')}"
+          >
+            Rp 0
+          </div>
         </div>
-
-        <div class="form-group" th:if="${user instanceof T(com.financetracker.student_finance_app.model.Mahasiswa)}">
-          <label>Email Kampus</label>
-          <input type="email" name="email" th:value="${user.email}" required />
+        <div class="stat-card selisih">
+          <div class="label">Selisih</div>
+          <div
+            class="nilai"
+            th:text="'Rp ' + ${#numbers.formatInteger(laporan.selisih, 1, 'COMMA')}"
+          >
+            Rp 0
+          </div>
         </div>
-
-        <input type="hidden" name="email" th:value="${user.noHP}"
-               th:if="${!(user instanceof T(com.financetracker.student_finance_app.model.Mahasiswa))}" />
-
-        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-      </form>
-    </div>
-
-    <!-- GANTI PASSWORD -->
-    <div class="card form-card">
-      <h3>Ganti Password</h3>
-
-      <div class="alert error" th:if="${errorPassword}" th:text="${errorPassword}"></div>
-      <div class="alert success" th:if="${suksesPassword}" th:text="${suksesPassword}"></div>
-
-      <form th:action="@{/auth/profil/ganti-password}" method="post">
-        <div class="form-group">
-          <label>Password Lama</label>
-          <input type="password" name="passwordLama" placeholder="Masukkan password lama" required />
+        <div class="stat-card saldo">
+          <div class="label">Saldo Saat Ini</div>
+          <div
+            class="nilai"
+            th:text="'Rp ' + ${#numbers.formatInteger(laporan.saldo, 1, 'COMMA')}"
+          >
+            Rp 0
+          </div>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label>Password Baru</label>
-          <input type="password" name="passwordBaru" placeholder="Masukkan password baru" required />
-        </div>
+      <!-- Tabel -->
+      <div class="table-scroll" style="margin-bottom: 1.5rem">
+        <table>
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Kategori</th>
+              <th>Keterangan</th>
+              <th>Jenis</th>
+              <th>Jumlah</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="t : ${laporan.transaksiList}">
+              <td th:text="${t.tanggal}">-</td>
+              <td th:text="${t.kategori != null ? t.kategori : '-'}">-</td>
+              <td th:text="${t.catatan  != null ? t.catatan  : '-'}">-</td>
+              <td>
+                <span
+                  class="badge"
+                  th:classappend="${t.jenis.name()=='PEMASUKAN'}?'masuk':'keluar'"
+                  th:text="${t.jenis}"
+                  >-</span
+                >
+              </td>
+              <td
+                class="jumlah"
+                th:classappend="${t.jenis.name()=='PEMASUKAN'}?'masuk':'keluar'"
+                th:text="'Rp ' + ${#numbers.formatInteger(t.jumlah, 1, 'COMMA')}"
+              >
+                -
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(laporan.transaksiList)}">
+              <td colspan="5" class="empty">
+                Tidak ada transaksi di periode ini.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        <button type="submit" class="btn btn-primary">Ganti Password</button>
-      </form>
-    </div>
+      <!-- KIRIM KE WA -->
+      <div class="card kirim-box">
+        <h3>Kirim Laporan ke WhatsApp Orang Tua</h3>
 
-    <!-- HAPUS AKUN -->
-    <div class="card">
-      <h3>Hapus Akun</h3>
-      <div class="hapus-section">
-        <p>Tindakan ini permanen dan tidak bisa dibatalkan. Seluruh data akun kamu akan dihapus.</p>
-        <form th:action="@{/auth/profil/hapus-akun}" method="post"
-              onsubmit="return confirm('Yakin ingin hapus akun? Tindakan ini tidak bisa dibatalkan.');">
-          <button type="submit" class="btn btn-danger">Hapus Akun Saya</button>
+        <p
+          style="
+            font-size: 0.85rem;
+            color: var(--ink-soft);
+            margin-bottom: 0.8rem;
+          "
+        >
+          Kirim otomatis ke orang tua yang sudah mendaftar dengan No HP
+          mahasiswa kamu:
+        </p>
+        <form
+          th:action="@{/laporan/kirim}"
+          method="post"
+          style="margin-bottom: 0.5rem"
+        >
+          <input type="hidden" name="periode" th:value="${periode}" />
+          <button type="submit" class="btn btn-green">
+            Kirim ke Orang Tua Terdaftar
+          </button>
+        </form>
+
+        <hr class="divider" />
+
+        <p
+          style="
+            font-size: 0.85rem;
+            color: var(--ink-soft);
+            margin-bottom: 0.8rem;
+          "
+        >
+          Atau kirim ke nomor WhatsApp lain secara manual:
+        </p>
+        <form th:action="@{/laporan/kirim-manual}" method="post">
+          <input type="hidden" name="periode" th:value="${periode}" />
+          <div class="kirim-row">
+            <div class="form-group">
+              <label>Nomor WhatsApp Tujuan</label>
+              <input
+                type="text"
+                name="noHP"
+                th:value="${noHPMahasiswa}"
+                placeholder="Contoh: 08123456789"
+              />
+            </div>
+            <button type="submit" class="btn btn-blue">
+              Kirim ke Nomor Ini
+            </button>
+          </div>
         </form>
       </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>
