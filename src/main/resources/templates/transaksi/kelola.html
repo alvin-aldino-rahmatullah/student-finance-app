@@ -38,6 +38,17 @@
     .alert.success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
     .alert.error   { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
     .nav-back { display: inline-block; margin-bottom: 1rem; color: #2b6cb0; text-decoration: none; font-size: 0.9rem; }
+    /* Modal Edit */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:999; justify-content:center; align-items:center; }
+    .modal-overlay.active { display:flex; }
+    .modal-box { background:white; border-radius:14px; padding:2rem; width:90%; max-width:560px; box-shadow:0 8px 30px rgba(0,0,0,0.2); }
+    .modal-box h3 { font-size:1rem; font-weight:700; color:#2b6cb0; margin-bottom:1rem; }
+    .modal-box .form-grid { grid-template-columns: repeat(2, 1fr); }
+    .modal-footer { display:flex; gap:0.8rem; margin-top:1.2rem; }
+    .btn-secondary { background:#e2e8f0; color:#4a5568; }
+    .btn-secondary:hover { background:#cbd5e0; }
+    .btn-warning { background:#d69e2e; color:white; padding: 0.35rem 0.9rem; font-size: 0.8rem; }
+    .btn-warning:hover { background:#b7791f; }
   </style>
 </head>
 <body>
@@ -125,7 +136,11 @@
         <td class="jumlah"
             th:classappend="${t.jenis.name() == 'PEMASUKAN'} ? 'masuk' : 'keluar'"
             th:text="'Rp ' + ${#numbers.formatInteger(t.jumlah, 1, 'COMMA')}">-</td>
-        <td>
+        <td style="display:flex; gap:0.5rem; align-items:center;">
+          <button class="btn btn-warning"
+                  th:attr="onclick='openEdit(' + ${t.id} + ',\'' + ${t.jenis} + '\',' + ${t.jumlah} + ',\'' + ${t.tanggal} + '\',\'' + (${t.kategori} != null ? ${t.kategori} : '') + '\',\'' + (${t.catatan} != null ? ${t.catatan} : '') + '\')'">
+            Edit
+          </button>
           <form th:action="@{'/transaksi/hapus/' + ${t.id}}" method="post" style="display:inline"
                 onsubmit="return confirm('Hapus transaksi ini?')">
             <button type="submit" class="btn btn-danger">Hapus</button>
@@ -137,6 +152,71 @@
       </tr>
     </tbody>
   </table>
-</div>
+    </div>
+    <!-- MODAL EDIT TRANSAKSI -->
+    <div class="modal-overlay" id="modalEdit">
+      <div class="modal-box">
+        <h3>✏️ Edit Transaksi</h3>
+        <form id="formEdit" method="post">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Jenis</label>
+              <select name="jenis" id="editJenis" required>
+                <option value="PEMASUKAN">Pemasukan</option>
+                <option value="PENGELUARAN">Pengeluaran</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Jumlah (Rp)</label>
+              <input type="number" name="jumlah" id="editJumlah" min="1" required/>
+            </div>
+            <div class="form-group">
+              <label>Tanggal</label>
+              <input type="date" name="tanggal" id="editTanggal" required/>
+            </div>
+            <div class="form-group">
+              <label>Kategori</label>
+              <select name="kategori" id="editKategori">
+                <option value="Makanan">Makanan</option>
+                <option value="Transport">Transport</option>
+                <option value="Pendidikan">Pendidikan</option>
+                <option value="Kesehatan">Kesehatan</option>
+                <option value="Hiburan">Hiburan</option>
+                <option value="Kos/Tempat Tinggal">Kos/Tempat Tinggal</option>
+                <option value="Beasiswa">Beasiswa</option>
+                <option value="Kiriman Orang Tua">Kiriman Orang Tua</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div class="form-group" style="grid-column: span 2">
+              <label>Catatan</label>
+              <input type="text" name="catatan" id="editCatatan" placeholder="Keterangan transaksi..."/>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <button type="button" class="btn btn-secondary" onclick="closeEdit()">Batal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+    function openEdit(id, jenis, jumlah, tanggal, kategori, catatan) {
+      document.getElementById('formEdit').action = '/transaksi/update/' + id;
+      document.getElementById('editJenis').value = jenis;
+      document.getElementById('editJumlah').value = jumlah;
+      document.getElementById('editTanggal').value = tanggal;
+      document.getElementById('editKategori').value = kategori;
+      document.getElementById('editCatatan').value = catatan;
+      document.getElementById('modalEdit').classList.add('active');
+    }
+    function closeEdit() {
+      document.getElementById('modalEdit').classList.remove('active');
+    }
+    document.getElementById('modalEdit').addEventListener('click', function(e) {
+      if (e.target === this) closeEdit();
+    });
+    </script>
 </body>
 </html>
