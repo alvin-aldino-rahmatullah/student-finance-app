@@ -1,97 +1,144 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="id">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard - Aplikasi Keuangan Mahasiswa</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}"/>
-</head>
-<body>
-<div class="navbar">
-  <div class="brand">
-    <h2>Keuangan Mahasiswa</h2>
-  </div>
-  <div>
-    <span class="tagline">Selamat datang, <strong th:text="${nama}">User</strong></span>
-  </div>
-  <div class="actions">
-    <a th:href="@{/auth/profil}">Profil</a>
-    <a th:href="@{/auth/logout}">Logout</a>
-  </div>
-</div>
-
-<div class="container">
-
-  <!-- KARTU RINGKASAN -->
-  <div class="cards" style="margin-top: 2rem;">
-    <div class="stat-card saldo">
-      <div class="label">Saldo Saat Ini</div>
-      <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(saldo, 1, 'COMMA')}">Rp 0</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Aplikasi Keuangan Mahasiswa</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="brand">
+        <h2>Keuangan Mahasiswa</h2>
+      </div>
+      <div style="text-align: center">
+        <span
+          style="
+            font-size: 0.85rem;
+            opacity: 0.8;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+          "
+          >Selamat datang</span
+        >
+        <div
+          style="font-size: 1.5rem; font-weight: 800; letter-spacing: 0.02em"
+          th:text="${nama}"
+        >
+          User
+        </div>
+      </div>
+      <div class="actions">
+        <a th:href="@{/auth/profil}">Profil</a>
+        <a th:href="@{/auth/logout}">Logout</a>
+      </div>
     </div>
-    <div class="stat-card masuk">
-      <div class="label">Pemasukan Bulan Ini</div>
-      <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(totalPemasukan, 1, 'COMMA')}">Rp 0</div>
+
+    <div class="container">
+      <!-- KARTU RINGKASAN -->
+      <div class="cards" style="margin-top: 2rem">
+        <div class="stat-card saldo">
+          <div class="label">Saldo Saat Ini</div>
+          <div
+            class="nilai"
+            th:text="'Rp ' + ${#numbers.formatInteger(saldo, 1, 'COMMA')}"
+          >
+            Rp 0
+          </div>
+        </div>
+        <div class="stat-card masuk">
+          <div class="label">Pemasukan Bulan Ini</div>
+          <div
+            class="nilai"
+            th:text="'Rp ' + ${#numbers.formatInteger(totalPemasukan, 1, 'COMMA')}"
+          >
+            Rp 0
+          </div>
+        </div>
+        <div class="stat-card keluar">
+          <div class="label">Pengeluaran Bulan Ini</div>
+          <div
+            class="nilai"
+            th:text="'Rp ' + ${#numbers.formatInteger(totalPengeluaran, 1, 'COMMA')}"
+          >
+            Rp 0
+          </div>
+        </div>
+      </div>
+
+      <!-- NAVIGASI MODUL -->
+      <div class="nav-modul">
+        <a th:href="@{/saldo}">
+          <span class="icon">💰</span>
+          Manajemen Saldo
+        </a>
+        <a th:href="@{/transaksi}">
+          <span class="icon">💼</span>
+          Kelola Transaksi
+        </a>
+        <a th:href="@{/transaksi/riwayat}">
+          <span class="icon">📋</span>
+          Riwayat Transaksi
+        </a>
+        <a th:href="@{/transaksi/statistik}">
+          <span class="icon">📊</span>
+          Statistik &amp; Grafik
+        </a>
+        <a th:href="@{/laporan}">
+          <span class="icon">📄</span>
+          Laporan
+        </a>
+      </div>
+
+      <!-- TRANSAKSI TERAKHIR -->
+      <div class="section-title">Transaksi Terakhir</div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Kategori</th>
+              <th>Keterangan</th>
+              <th>Jenis</th>
+              <th>Jumlah</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              th:if="${transaksiTerakhir == null or #lists.isEmpty(transaksiTerakhir)}"
+            >
+              <td colspan="5">
+                Belum ada transaksi.
+                <a th:href="@{/transaksi}">Tambah transaksi pertama →</a>
+              </td>
+            </tr>
+            <tr th:each="t : ${transaksiTerakhir}">
+              <td th:text="${t.tanggal}">-</td>
+              <td th:text="${t.kategori != null ? t.kategori : '-'}">-</td>
+              <td th:text="${t.catatan  != null ? t.catatan  : '-'}">-</td>
+              <td>
+                <span
+                  class="badge"
+                  th:classappend="${t.jenis.name() == 'PEMASUKAN'} ? 'masuk' : 'keluar'"
+                  th:text="${t.jenis}"
+                  >-</span
+                >
+              </td>
+              <td
+                class="jumlah"
+                th:classappend="${t.jenis.name() == 'PEMASUKAN'} ? 'masuk' : 'keluar'"
+                th:text="'Rp ' + ${#numbers.formatInteger(t.jumlah, 1, 'COMMA')}"
+              >
+                -
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <a class="lihat-semua" th:href="@{/transaksi/riwayat}"
+        >Lihat semua transaksi →</a
+      >
     </div>
-    <div class="stat-card keluar">
-      <div class="label">Pengeluaran Bulan Ini</div>
-      <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(totalPengeluaran, 1, 'COMMA')}">Rp 0</div>
-    </div>
-  </div>
-
-  <!-- NAVIGASI MODUL -->
-  <div class="nav-modul">
-    <a th:href="@{/saldo}">
-      <span class="icon">💰</span>
-      Manajemen Saldo
-    </a>
-    <a th:href="@{/transaksi}">
-      <span class="icon">💼</span>
-      Kelola Transaksi
-    </a>
-    <a th:href="@{/transaksi/riwayat}">
-      <span class="icon">📋</span>
-      Riwayat Transaksi
-    </a>
-    <a th:href="@{/transaksi/statistik}">
-      <span class="icon">📊</span>
-      Statistik &amp; Grafik
-    </a>
-    <a th:href="@{/laporan}">
-      <span class="icon">📄</span>
-      Laporan
-    </a>
-  </div>
-
-  <!-- TRANSAKSI TERAKHIR -->
-  <div class="section-title">Transaksi Terakhir</div>
-  <div class="table-scroll">
-  <table>
-    <thead>
-      <tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jenis</th><th>Jumlah</th></tr>
-    </thead>
-    <tbody>
-      <tr th:each="t : ${transaksiTerakhir}">
-        <td th:text="${t.tanggal}">-</td>
-        <td th:text="${t.kategori != null ? t.kategori : '-'}">-</td>
-        <td th:text="${t.catatan  != null ? t.catatan  : '-'}">-</td>
-        <td>
-          <span class="badge"
-                th:classappend="${t.jenis.name()=='PEMASUKAN'} ? 'masuk' : 'keluar'"
-                th:text="${t.jenis}">-</span>
-        </td>
-        <td class="jumlah"
-            th:classappend="${t.jenis.name()=='PEMASUKAN'} ? 'masuk' : 'keluar'"
-            th:text="'Rp ' + ${#numbers.formatInteger(t.jumlah, 1, 'COMMA')}">-</td>
-      </tr>
-      <tr class="empty-row" th:if="${#lists.isEmpty(transaksiTerakhir)}">
-        <td colspan="5">Belum ada transaksi. <a th:href="@{/transaksi}">Tambah transaksi pertama →</a></td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
-
-  <a class="lihat-semua" th:href="@{/transaksi/riwayat}">Lihat semua transaksi →</a>
-
-</div>
-</body>
+  </body>
 </html>
