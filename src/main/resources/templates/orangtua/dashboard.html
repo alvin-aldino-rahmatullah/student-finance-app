@@ -4,83 +4,23 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard Orang Tua</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Segoe UI", sans-serif; background: #f0f4f8; }
-    .navbar {
-      background: #276749; color: white;
-      padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
-    }
-    .navbar h2 { font-size: 1.1rem; }
-    .navbar span { font-size: 0.85rem; opacity: 0.85; }
-    .navbar a {
-      color: white; text-decoration: none;
-      background: rgba(255,255,255,0.2);
-      padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; margin-left: 0.5rem;
-    }
-    .navbar a:hover { background: rgba(255,255,255,0.35); }
-    .container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
-    .page-title { font-size: 1.3rem; font-weight: 700; color: #2d3748; margin-bottom: 1.5rem; }
-
-    /* Kartu ringkasan */
-    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-    .card { background: white; border-radius: 12px; padding: 1.3rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-    .card .lbl { font-size: 0.75rem; color: #718096; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.04em; }
-    .card .val { font-size: 1.3rem; font-weight: 700; }
-    .card.saldo .val  { color: #2b6cb0; }
-    .card.masuk .val  { color: #276749; }
-    .card.keluar .val { color: #c53030; }
-    .card.selisih .val { color: #744210; }
-
-    /* Filter periode */
-    .filter-bar { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; align-items: center; }
-    .filter-bar a { padding: 0.5rem 1.2rem; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; border: 2px solid #e2e8f0; color: #4a5568; }
-    .filter-bar a.active { background: #276749; color: white; border-color: #276749; }
-
-    /* Tabel */
-    .section-title { font-size: 1rem; font-weight: 700; color: #2d3748; margin-bottom: 0.8rem; }
-    table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 2rem; }
-    th { background: #f0fff4; color: #276749; font-size: 0.8rem; padding: 0.75rem 1rem; text-align: left; }
-    td { padding: 0.75rem 1rem; font-size: 0.9rem; color: #4a5568; border-top: 1px solid #f0f4f8; }
-    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-    .badge.masuk  { background: #f0fff4; color: #276749; }
-    .badge.keluar { background: #fff5f5; color: #c53030; }
-    .jumlah.masuk  { color: #276749; font-weight: 600; }
-    .jumlah.keluar { color: #c53030; font-weight: 600; }
-
-    /* Alert */
-    .alert { padding: 1rem; border-radius: 10px; margin-bottom: 1.2rem; font-size: 0.9rem; }
-    .alert.warning { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
-    .alert.success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
-    .alert.error   { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
-    .alert a { color: inherit; font-weight: 700; }
-
-    /* Info mahasiswa */
-    .info-box { background: white; border-radius: 12px; padding: 1.2rem 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
-    .info-box .avatar { width: 48px; height: 48px; background: #276749; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; }
-    .info-box .detail .name { font-weight: 700; color: #2d3748; }
-    .info-box .detail .sub { font-size: 0.82rem; color: #718096; }
-    .empty-row td { text-align: center; color: #a0aec0; padding: 2rem; }
-  </style>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
-<body>
-<div class="navbar">
-  <div>
-    <h2>👨‍👩‍👧 Portal Orang Tua</h2>
-    <span>Selamat datang, <strong th:text="${nama}">Orang Tua</strong></span>
-  </div>
-  <div>
-    <a th:href="@{/orangtua/profil}">⚙️ Pengaturan</a>
+<body class="portal">
+<div class="navbar portal">
+  <div class="brand"><h2>Portal Orang Tua</h2></div>
+  <div><span class="tagline">Selamat datang, <strong th:text="${nama}">Orang Tua</strong></span></div>
+  <div class="actions">
+    <a th:href="@{/orangtua/profil}">Pengaturan</a>
     <a th:href="@{/auth/logout}">Logout</a>
   </div>
 </div>
 
 <div class="container">
-  <div class="page-title">📊 Pantau Keuangan Anak</div>
+  <div class="page-title" style="margin-top: 2rem;">Pantau Keuangan Anak</div>
 
-  <!-- Alert -->
   <div class="alert warning" th:if="${peringatan}">
-    ⚠️ <span th:text="${peringatan}"></span>
+    <span th:text="${peringatan}"></span>
     <a th:href="@{/orangtua/profil}"> Klik di sini untuk atur.</a>
   </div>
   <div class="alert success" th:if="${sukses}" th:text="${sukses}"></div>
@@ -97,36 +37,37 @@
 
   <!-- Filter Periode -->
   <div class="filter-bar" th:if="${laporan != null}">
-    <span style="font-size:0.85rem;font-weight:600;color:#4a5568">Periode:</span>
+    <span class="label">Periode:</span>
     <a th:href="@{/orangtua/dashboard(periode='bulanan')}"  th:classappend="${periode=='bulanan'} ? ' active' : ''">Bulan Ini</a>
     <a th:href="@{/orangtua/dashboard(periode='mingguan')}" th:classappend="${periode=='mingguan'} ? ' active' : ''">7 Hari Terakhir</a>
   </div>
 
   <!-- Kartu Ringkasan -->
-  <div class="cards" th:if="${laporan != null}">
-    <div class="card saldo">
-      <div class="lbl">Saldo Saat Ini</div>
-      <div class="val" th:text="'Rp ' + ${#numbers.formatInteger(laporan.saldo, 1, 'COMMA')}">Rp 0</div>
+  <div class="cards cols-4" th:if="${laporan != null}">
+    <div class="stat-card saldo">
+      <div class="label">Saldo Saat Ini</div>
+      <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(laporan.saldo, 1, 'COMMA')}">Rp 0</div>
     </div>
-    <div class="card masuk">
-      <div class="lbl">Total Pemasukan</div>
-      <div class="val" th:text="'Rp ' + ${#numbers.formatInteger(laporan.totalPemasukan, 1, 'COMMA')}">Rp 0</div>
+    <div class="stat-card masuk">
+      <div class="label">Total Pemasukan</div>
+      <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(laporan.totalPemasukan, 1, 'COMMA')}">Rp 0</div>
     </div>
-    <div class="card keluar">
-      <div class="lbl">Total Pengeluaran</div>
-      <div class="val" th:text="'Rp ' + ${#numbers.formatInteger(laporan.totalPengeluaran, 1, 'COMMA')}">Rp 0</div>
+    <div class="stat-card keluar">
+      <div class="label">Total Pengeluaran</div>
+      <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(laporan.totalPengeluaran, 1, 'COMMA')}">Rp 0</div>
     </div>
-    <div class="card selisih">
-      <div class="lbl">Selisih</div>
-      <div class="val" th:text="'Rp ' + ${#numbers.formatInteger(laporan.selisih, 1, 'COMMA')}">Rp 0</div>
+    <div class="stat-card selisih">
+      <div class="label">Selisih</div>
+      <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(laporan.selisih, 1, 'COMMA')}">Rp 0</div>
     </div>
   </div>
 
   <!-- Tabel Transaksi -->
   <div th:if="${laporan != null}">
-    <div class="section-title">📋 Detail Transaksi
+    <div class="section-title">Detail Transaksi
       (<span th:text="${laporan.periode}">-</span>)
     </div>
+    <div class="table-scroll">
     <table>
       <thead>
         <tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jenis</th><th>Jumlah</th></tr>
@@ -150,6 +91,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 </div>
 </body>

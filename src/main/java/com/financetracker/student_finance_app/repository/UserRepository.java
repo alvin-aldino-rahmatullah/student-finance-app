@@ -5,6 +5,7 @@ import com.financetracker.student_finance_app.model.OrangTua;
 import com.financetracker.student_finance_app.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -13,17 +14,17 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT m FROM Mahasiswa m WHERE m.email = :email")
-    Optional<Mahasiswa> findByEmail(String email);
+    Optional<Mahasiswa> findByEmail(@Param("email") String email);
 
     @Query("SELECT o FROM OrangTua o WHERE o.noHP = :noHP")
-    Optional<OrangTua> findOrangTuaByNoHP(String noHP);
+    Optional<OrangTua> findOrangTuaByNoHP(@Param("noHP") String noHP);
 
     @Query("SELECT m FROM Mahasiswa m WHERE m.noHP = :noHP")
-    Optional<Mahasiswa> findMahasiswaByNoHP(String noHP);
+    Optional<Mahasiswa> findMahasiswaByNoHP(@Param("noHP") String noHP);
 
     @Query("SELECT COUNT(m) > 0 FROM Mahasiswa m WHERE m.email = :email")
-    boolean existsByEmail(String email);
+    boolean existsByEmail(@Param("email") String email);
 
     @Query("SELECT COUNT(o) > 0 FROM OrangTua o WHERE o.noHP = :noHP")
-    boolean existsByNoHP(String noHP);
+    boolean existsByNoHP(@Param("noHP") String noHP);
 }

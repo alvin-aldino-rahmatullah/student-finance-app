@@ -4,52 +4,13 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Daftar Akun</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Segoe UI", sans-serif; background: #f0f4f8; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-    .wrapper { width: 100%; max-width: 480px; padding: 1.5rem; }
-    .card { background: white; border-radius: 16px; padding: 2.5rem; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
-    .logo { text-align: center; margin-bottom: 1.5rem; }
-    .logo h1 { font-size: 1.5rem; font-weight: 700; color: #2b6cb0; }
-    .logo p { font-size: 0.85rem; color: #718096; margin-top: 0.3rem; }
-    /* Tab tipe user */
-    .tab-bar { display: flex; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; margin-bottom: 1.5rem; }
-    .tab-bar button {
-      flex: 1; padding: 0.65rem; border: none; background: white;
-      font-size: 0.88rem; font-weight: 600; cursor: pointer; color: #718096;
-    }
-    .tab-bar button.active { background: #2b6cb0; color: white; }
-    /* Form */
-    .form-section { display: none; }
-    .form-section.show { display: block; }
-    .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #4a5568; margin-bottom: 0.4rem; }
-    .form-group input {
-      width: 100%; padding: 0.65rem 1rem; border: 1px solid #e2e8f0;
-      border-radius: 8px; font-size: 0.9rem; outline: none;
-    }
-    .form-group input:focus { border-color: #4299e1; }
-    .form-group .hint { font-size: 0.75rem; color: #a0aec0; margin-top: 0.3rem; }
-    .btn {
-      width: 100%; padding: 0.75rem; border: none; border-radius: 8px;
-      font-size: 1rem; font-weight: 600; cursor: pointer;
-      background: #3182ce; color: white; margin-top: 0.5rem;
-    }
-    .btn:hover { background: #2b6cb0; }
-    .btn.green { background: #276749; }
-    .btn.green:hover { background: #22543d; }
-    .login-link { text-align: center; margin-top: 1.2rem; font-size: 0.88rem; color: #718096; }
-    .login-link a { color: #3182ce; text-decoration: none; font-weight: 600; }
-    .alert { padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem; }
-    .alert.error   { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
-    .alert.success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
-  </style>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<div class="wrapper">
-  <div class="card">
-    <div class="logo">
-      <h1>💰 Keuangan Mahasiswa</h1>
+<div class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <h1>Keuangan Mahasiswa</h1>
       <p>Buat akun baru</p>
     </div>
 
@@ -58,8 +19,8 @@
 
     <!-- Tab Pilih Tipe -->
     <div class="tab-bar">
-      <button class="active" onclick="switchTab('mahasiswa', this)">🎓 Mahasiswa</button>
-      <button onclick="switchTab('orangtua', this)">👨‍👩‍👧 Orang Tua</button>
+      <button class="active" onclick="switchTab('mahasiswa', this)">Mahasiswa</button>
+      <button onclick="switchTab('orangtua', this)">Orang Tua</button>
     </div>
 
     <!-- Form Mahasiswa -->
@@ -82,7 +43,7 @@
           <label>Password</label>
           <input type="password" name="password" required placeholder="Buat password"/>
         </div>
-        <button type="submit" class="btn">Daftar sebagai Mahasiswa</button>
+        <button type="submit" class="btn btn-primary btn-block">Daftar sebagai Mahasiswa</button>
       </form>
     </div>
 
@@ -106,11 +67,11 @@
           <label>Password</label>
           <input type="password" name="password" required placeholder="Buat password"/>
         </div>
-        <button type="submit" class="btn green">Daftar sebagai Orang Tua</button>
+        <button type="submit" class="btn btn-green btn-block">Daftar sebagai Orang Tua</button>
       </form>
     </div>
 
-    <div class="login-link">Sudah punya akun? <a th:href="@{/auth/login}">Login di sini</a></div>
+    <div class="auth-link">Sudah punya akun? <a th:href="@{/auth/login}">Login di sini</a></div>
   </div>
 </div>
 

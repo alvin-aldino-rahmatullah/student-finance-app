@@ -1,158 +1,84 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="id">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Laporan Keuangan</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Segoe UI", sans-serif; background: #f0f4f8; }
-    .navbar { background: #2b6cb0; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-    .navbar h2 { font-size: 1.1rem; }
-    .navbar a { color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; margin-left: 0.5rem; }
-    .container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
-    .page-title { font-size: 1.3rem; font-weight: 700; color: #2d3748; margin-bottom: 1rem; }
-    .filter-bar { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; align-items: center; }
-    .filter-bar a { padding: 0.5rem 1.2rem; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; border: 2px solid #e2e8f0; color: #4a5568; }
-    .filter-bar a.active { background: #3182ce; color: white; border-color: #3182ce; }
-    .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
-    .sum-card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-    .sum-card .lbl { font-size: 0.72rem; color: #718096; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.4rem; }
-    .sum-card .val { font-size: 1.2rem; font-weight: 700; }
-    .sum-card.masuk .val  { color: #276749; }
-    .sum-card.keluar .val { color: #c53030; }
-    .sum-card.selisih .val { color: #2b6cb0; }
-    .sum-card.saldo .val  { color: #1a202c; }
-    table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 1.5rem; }
-    th { background: #ebf8ff; color: #2b6cb0; font-size: 0.8rem; padding: 0.75rem 1rem; text-align: left; }
-    td { padding: 0.75rem 1rem; font-size: 0.9rem; color: #4a5568; border-top: 1px solid #f0f4f8; }
-    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-    .badge.masuk  { background: #f0fff4; color: #276749; }
-    .badge.keluar { background: #fff5f5; color: #c53030; }
-    .jumlah.masuk  { color: #276749; font-weight: 600; }
-    .jumlah.keluar { color: #c53030; font-weight: 600; }
-    /* Kirim section */
-    .kirim-box { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 1.5rem; }
-    .kirim-box h3 { font-size: 0.95rem; font-weight: 700; color: #2b6cb0; margin-bottom: 1rem; }
-    .kirim-row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
-    .form-group { flex: 1; min-width: 200px; }
-    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #4a5568; margin-bottom: 0.4rem; }
-    .form-group input { width: 100%; padding: 0.6rem 0.9rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem; outline: none; }
-    .form-group input:focus { border-color: #4299e1; }
-    .btn { padding: 0.65rem 1.3rem; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
-    .btn-green { background: #276749; color: white; }
-    .btn-green:hover { background: #22543d; }
-    .btn-blue  { background: #3182ce; color: white; }
-    .btn-blue:hover  { background: #2b6cb0; }
-    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 1rem 0; }
-    .alert { padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem; }
-    .alert.success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
-    .alert.error   { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
-    .meta { color: #718096; font-size: 0.82rem; margin-bottom: 1.5rem; }
-    .nav-back { display: inline-block; margin-bottom: 1rem; color: #2b6cb0; text-decoration: none; font-size: 0.9rem; }
-    .empty { text-align:center; padding: 2rem; color: #a0aec0; font-size: 0.9rem; }
-    @media print { .navbar, .filter-bar, .kirim-box, .nav-back { display: none !important; } body { background: white; } }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profil - Aplikasi Keuangan Mahasiswa</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<div class="navbar">
-  <div><h2>💰 Keuangan Mahasiswa</h2></div>
-  <div>
-    <a th:href="@{/dashboard}">Dashboard</a>
-    <a href="javascript:window.print()">🖨️ Cetak</a>
-    <a th:href="@{/auth/logout}">Logout</a>
-  </div>
-</div>
-
-<div class="container">
-  <a class="nav-back" th:href="@{/dashboard}">← Dashboard</a>
-  <div class="page-title">📄 Laporan Keuangan — <span th:text="${nama}">User</span></div>
-
-  <div class="alert success" th:if="${sukses}" th:text="${sukses}"></div>
-  <div class="alert error"   th:if="${error}"  th:text="${error}"></div>
-
-  <div class="filter-bar">
-    <span style="font-size:0.85rem;color:#4a5568;font-weight:600">Periode:</span>
-    <a th:href="@{/laporan(periode='bulanan')}"  th:classappend="${periode=='bulanan'} ? ' active' : ''">Bulan Ini</a>
-    <a th:href="@{/laporan(periode='mingguan')}" th:classappend="${periode=='mingguan'} ? ' active' : ''">7 Hari Terakhir</a>
-  </div>
-
-  <div class="meta">
-    📅 Periode: <strong th:text="${laporan.periode}">-</strong> &nbsp;|&nbsp;
-    Digenerate: <strong th:text="${laporan.tanggalGenerate}">-</strong>
-  </div>
-
-  <!-- Ringkasan -->
-  <div class="summary">
-    <div class="sum-card masuk">
-      <div class="lbl">Total Pemasukan</div>
-      <div class="val" th:text="'Rp ' + ${#numbers.formatInteger(laporan.totalPemasukan, 1, 'COMMA')}">Rp 0</div>
-    </div>
-    <div class="sum-card keluar">
-      <div class="lbl">Total Pengeluaran</div>
-      <div class="val" th:text="'Rp ' + ${#numbers.formatInteger(laporan.totalPengeluaran, 1, 'COMMA')}">Rp 0</div>
-    </div>
-    <div class="sum-card selisih">
-      <div class="lbl">Selisih</div>
-      <div class="val" th:text="'Rp ' + ${#numbers.formatInteger(laporan.selisih, 1, 'COMMA')}">Rp 0</div>
-    </div>
-    <div class="sum-card saldo">
-      <div class="lbl">Saldo Saat Ini</div>
-      <div class="val" th:text="'Rp ' + ${#numbers.formatInteger(laporan.saldo, 1, 'COMMA')}">Rp 0</div>
+  <div class="navbar">
+    <div class="brand"><h2>Profil Saya</h2></div>
+    <div class="actions">
+      <a th:href="@{/dashboard}">Dashboard</a>
+      <a th:href="@{/auth/logout}">Logout</a>
     </div>
   </div>
 
-  <!-- Tabel -->
-  <table>
-    <thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jenis</th><th>Jumlah</th></tr></thead>
-    <tbody>
-      <tr th:each="t : ${laporan.transaksiList}">
-        <td th:text="${t.tanggal}">-</td>
-        <td th:text="${t.kategori != null ? t.kategori : '-'}">-</td>
-        <td th:text="${t.catatan  != null ? t.catatan  : '-'}">-</td>
-        <td><span class="badge" th:classappend="${t.jenis.name()=='PEMASUKAN'}?'masuk':'keluar'" th:text="${t.jenis}">-</span></td>
-        <td class="jumlah" th:classappend="${t.jenis.name()=='PEMASUKAN'}?'masuk':'keluar'"
-            th:text="'Rp ' + ${#numbers.formatInteger(t.jumlah, 1, 'COMMA')}">-</td>
-      </tr>
-      <tr th:if="${#lists.isEmpty(laporan.transaksiList)}">
-        <td colspan="5" class="empty">Tidak ada transaksi di periode ini.</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="container narrow">
+    <!-- EDIT PROFIL -->
+    <div class="card form-card" style="margin-top: 2rem;">
+      <h3>Edit Profil</h3>
 
-  <!-- KIRIM KE WA -->
-  <div class="kirim-box">
-    <h3>📲 Kirim Laporan ke WhatsApp Orang Tua</h3>
+      <div class="alert error" th:if="${error}" th:text="${error}"></div>
+      <div class="alert success" th:if="${sukses}" th:text="${sukses}"></div>
 
-    <!-- Kirim otomatis ke orang tua terdaftar -->
-    <p style="font-size:0.85rem;color:#4a5568;margin-bottom:0.8rem">
-      Kirim otomatis ke orang tua yang sudah mendaftar dengan No HP mahasiswa kamu:
-    </p>
-    <form th:action="@{/laporan/kirim}" method="post" style="margin-bottom:0.5rem">
-      <input type="hidden" name="periode" th:value="${periode}"/>
-      <button type="submit" class="btn btn-green">📤 Kirim ke Orang Tua Terdaftar</button>
-    </form>
-
-    <hr class="divider"/>
-
-    <!-- Kirim manual ke nomor tertentu -->
-    <p style="font-size:0.85rem;color:#4a5568;margin-bottom:0.8rem">
-      Atau kirim ke nomor WhatsApp lain secara manual:
-    </p>
-    <form th:action="@{/laporan/kirim-manual}" method="post">
-      <input type="hidden" name="periode" th:value="${periode}"/>
-      <div class="kirim-row">
+      <form th:action="@{/auth/profil/edit}" method="post">
         <div class="form-group">
-          <label>Nomor WhatsApp Tujuan</label>
-          <input type="text" name="noHP"
-                 th:value="${noHPMahasiswa}"
-                 placeholder="Contoh: 08123456789"/>
+          <label>Nama Lengkap</label>
+          <input type="text" name="nama" th:value="${user.nama}" required />
         </div>
-        <button type="submit" class="btn btn-blue">📨 Kirim ke Nomor Ini</button>
-      </div>
-    </form>
-  </div>
 
-</div>
+        <div class="form-group">
+          <label>Nomor HP</label>
+          <input type="text" name="noHP" th:value="${user.noHP}" required />
+        </div>
+
+        <div class="form-group" th:if="${user instanceof T(com.financetracker.student_finance_app.model.Mahasiswa)}">
+          <label>Email Kampus</label>
+          <input type="email" name="email" th:value="${user.email}" required />
+        </div>
+
+        <input type="hidden" name="email" th:value="${user.noHP}"
+               th:if="${!(user instanceof T(com.financetracker.student_finance_app.model.Mahasiswa))}" />
+
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+      </form>
+    </div>
+
+    <!-- GANTI PASSWORD -->
+    <div class="card form-card">
+      <h3>Ganti Password</h3>
+
+      <div class="alert error" th:if="${errorPassword}" th:text="${errorPassword}"></div>
+      <div class="alert success" th:if="${suksesPassword}" th:text="${suksesPassword}"></div>
+
+      <form th:action="@{/auth/profil/ganti-password}" method="post">
+        <div class="form-group">
+          <label>Password Lama</label>
+          <input type="password" name="passwordLama" placeholder="Masukkan password lama" required />
+        </div>
+
+        <div class="form-group">
+          <label>Password Baru</label>
+          <input type="password" name="passwordBaru" placeholder="Masukkan password baru" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Ganti Password</button>
+      </form>
+    </div>
+
+    <!-- HAPUS AKUN -->
+    <div class="card">
+      <h3>Hapus Akun</h3>
+      <div class="hapus-section">
+        <p>Tindakan ini permanen dan tidak bisa dibatalkan. Seluruh data akun kamu akan dihapus.</p>
+        <form th:action="@{/auth/profil/hapus-akun}" method="post"
+              onsubmit="return confirm('Yakin ingin hapus akun? Tindakan ini tidak bisa dibatalkan.');">
+          <button type="submit" class="btn btn-danger">Hapus Akun Saya</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

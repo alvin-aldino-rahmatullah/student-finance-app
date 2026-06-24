@@ -4,97 +4,42 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Statistik & Grafik - Keuangan Mahasiswa</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Segoe UI", sans-serif; background: #f0f4f8; }
-
-    .navbar {
-      background: #2b6cb0; color: white;
-      padding: 1rem 2rem; display: flex;
-      justify-content: space-between; align-items: center;
-    }
-    .navbar h2 { font-size: 1.1rem; }
-    .navbar a {
-      color: white; text-decoration: none;
-      background: rgba(255,255,255,0.2);
-      padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; margin-left: 0.5rem;
-    }
-    .navbar a:hover { background: rgba(255,255,255,0.35); }
-
-    .container { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
-
-    .page-title { font-size: 1.4rem; font-weight: 700; color: #2d3748; margin-bottom: 1.5rem; }
-
-    /* KARTU RINGKASAN */
-    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-    .card {
-      background: white; border-radius: 12px; padding: 1.5rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-    .card .label { font-size: 0.78rem; color: #718096; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.04em; }
-    .card .nilai { font-size: 1.5rem; font-weight: 700; }
-    .card.masuk .nilai { color: #276749; }
-    .card.keluar .nilai { color: #c53030; }
-    .card.selisih .nilai { color: #2b6cb0; }
-    .card .periode { font-size: 0.75rem; color: #a0aec0; margin-top: 0.4rem; }
-
-    /* GRAFIK */
-    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-    .chart-box {
-      background: white; border-radius: 12px; padding: 1.5rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-    .chart-box h3 { font-size: 0.95rem; font-weight: 700; color: #2d3748; margin-bottom: 1rem; }
-    .chart-box canvas { max-height: 260px; }
-    .chart-box.full { grid-column: span 2; }
-
-    .alert { padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem; }
-    .alert.success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
-    .alert.error   { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
-
-    .nav-back { display: inline-block; margin-bottom: 1.2rem; color: #2b6cb0; text-decoration: none; font-size: 0.9rem; }
-    .nav-back:hover { text-decoration: underline; }
-
-    .empty-state { text-align: center; padding: 3rem; color: #a0aec0; font-size: 0.95rem; }
-  </style>
 </head>
 <body>
 
 <div class="navbar">
-  <div>
-    <h2>💰 Keuangan Mahasiswa</h2>
-    <span>Statistik &amp; Grafik</span>
-  </div>
-  <div>
+  <div class="brand"><h2>Keuangan Mahasiswa</h2></div>
+  <div><span class="tagline">Statistik &amp; Grafik</span></div>
+  <div class="actions">
     <a th:href="@{/dashboard}">Dashboard</a>
     <a th:href="@{/transaksi/riwayat}">Riwayat</a>
     <a th:href="@{/auth/logout}">Logout</a>
   </div>
 </div>
 
-<div class="container">
+<div class="container wide">
   <a class="nav-back" th:href="@{/dashboard}">← Kembali ke Dashboard</a>
 
-  <div class="page-title">📊 Statistik &amp; Grafik Keuangan</div>
+  <div class="page-title">Statistik &amp; Grafik Keuangan</div>
 
-  <!-- PESAN FLASH -->
   <div class="alert success" th:if="${sukses}" th:text="${sukses}"></div>
   <div class="alert error"   th:if="${error}"  th:text="${error}"></div>
 
   <!-- KARTU RINGKASAN BULANAN -->
   <div class="cards">
-    <div class="card masuk">
-      <div class="label">Total Pemasukan Bulan Ini</div>
+    <div class="stat-card masuk">
+      <div class="label">Pemasukan Bulan Ini</div>
       <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(statistik['totalPemasukan'], 1, 'COMMA')}">Rp 0</div>
       <div class="periode" th:text="${statistik['periodeLabel']}"></div>
     </div>
-    <div class="card keluar">
-      <div class="label">Total Pengeluaran Bulan Ini</div>
+    <div class="stat-card keluar">
+      <div class="label">Pengeluaran Bulan Ini</div>
       <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(statistik['totalPengeluaran'], 1, 'COMMA')}">Rp 0</div>
       <div class="periode" th:text="${statistik['periodeLabel']}"></div>
     </div>
-    <div class="card selisih">
+    <div class="stat-card selisih">
       <div class="label">Selisih (Tabungan Bersih)</div>
       <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(statistik['selisih'], 1, 'COMMA')}">Rp 0</div>
       <div class="periode">Saldo: <span th:text="'Rp ' + ${#numbers.formatInteger(saldo, 1, 'COMMA')}"></span></div>
@@ -104,22 +49,19 @@
   <!-- GRAFIK -->
   <div class="charts-grid">
 
-    <!-- Pie: Komposisi Pemasukan vs Pengeluaran -->
     <div class="chart-box">
-      <h3>🥧 Komposisi Bulan Ini</h3>
+      <h3>Komposisi Bulan Ini</h3>
       <canvas id="chartKomposisi"></canvas>
     </div>
 
-    <!-- Doughnut: Kategori Pengeluaran -->
     <div class="chart-box">
-      <h3>🏷️ Pengeluaran per Kategori</h3>
+      <h3>Pengeluaran per Kategori</h3>
       <canvas id="chartKategori"></canvas>
       <div class="empty-state" id="emptyKategori" style="display:none">Belum ada data pengeluaran bulan ini</div>
     </div>
 
-    <!-- Bar: Tren Bulanan -->
     <div class="chart-box full">
-      <h3>📈 Tren Pemasukan vs Pengeluaran (Per Bulan)</h3>
+      <h3>Tren Pemasukan vs Pengeluaran (Per Bulan)</h3>
       <canvas id="chartTrend"></canvas>
       <div class="empty-state" id="emptyTrend" style="display:none">Belum ada data transaksi</div>
     </div>
@@ -133,12 +75,10 @@
   const totalPemasukan  = /*[[${statistik['totalPemasukan']}]]*/ 0;
   const totalPengeluaran = /*[[${statistik['totalPengeluaran']}]]*/ 0;
 
-  // Kategori pengeluaran (Map -> dua array)
   const rawKategori = /*[[${kategoriPengeluaran}]]*/ {};
   const kategoriLabels = Object.keys(rawKategori);
   const kategoriValues = Object.values(rawKategori);
 
-  // Tren bulanan
   const rawTrend = /*[[${trendBulanan}]]*/ {labels:[], pemasukan:[], pengeluaran:[]};
   const trendLabels      = rawTrend.labels      || [];
   const trendPemasukan   = rawTrend.pemasukan   || [];
@@ -148,16 +88,20 @@
 
 <script>
   const fmt = (v) => 'Rp ' + Number(v).toLocaleString('id-ID');
+  const palette = {
+    mint: '#2f6f5e', mintDeep: '#1d4a3d',
+    coral: '#b4503f', coralDeep: '#8c3c2e',
+    gold: '#ad7e2c', portal: '#3d5a7a'
+  };
 
-  // ---- 1. Pie: Komposisi ----
   new Chart(document.getElementById('chartKomposisi'), {
     type: 'pie',
     data: {
       labels: ['Pemasukan', 'Pengeluaran'],
       datasets: [{
         data: [totalPemasukan, totalPengeluaran],
-        backgroundColor: ['#48bb78', '#fc8181'],
-        borderColor: ['#276749', '#c53030'],
+        backgroundColor: [palette.mint, palette.coral],
+        borderColor: [palette.mintDeep, palette.coralDeep],
         borderWidth: 1
       }]
     },
@@ -165,25 +109,22 @@
       responsive: true,
       plugins: {
         legend: { position: 'bottom' },
-        tooltip: {
-          callbacks: { label: ctx => ' ' + fmt(ctx.parsed) }
-        }
+        tooltip: { callbacks: { label: ctx => ' ' + fmt(ctx.parsed) } }
       }
     }
   });
 
-  // ---- 2. Doughnut: Kategori Pengeluaran ----
   if (kategoriLabels.length === 0) {
     document.getElementById('emptyKategori').style.display = 'block';
   } else {
-    const palette = ['#fc8181','#f6ad55','#68d391','#63b3ed','#b794f4','#f687b3','#fbd38d','#76e4f7'];
+    const kategoriPalette = ['#b4503f','#ad7e2c','#2f6f5e','#3d5a7a','#7a5a8c','#a35d77','#8a8536','#4f8a8a'];
     new Chart(document.getElementById('chartKategori'), {
       type: 'doughnut',
       data: {
         labels: kategoriLabels,
         datasets: [{
           data: kategoriValues,
-          backgroundColor: palette.slice(0, kategoriLabels.length),
+          backgroundColor: kategoriPalette.slice(0, kategoriLabels.length),
           borderWidth: 1
         }]
       },
@@ -191,15 +132,12 @@
         responsive: true,
         plugins: {
           legend: { position: 'bottom' },
-          tooltip: {
-            callbacks: { label: ctx => ' ' + ctx.label + ': ' + fmt(ctx.parsed) }
-          }
+          tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + fmt(ctx.parsed) } }
         }
       }
     });
   }
 
-  // ---- 3. Bar: Tren Bulanan ----
   if (trendLabels.length === 0) {
     document.getElementById('emptyTrend').style.display = 'block';
   } else {
@@ -208,36 +146,18 @@
       data: {
         labels: trendLabels,
         datasets: [
-          {
-            label: 'Pemasukan',
-            data: trendPemasukan,
-            backgroundColor: '#68d391',
-            borderColor: '#276749',
-            borderWidth: 1
-          },
-          {
-            label: 'Pengeluaran',
-            data: trendPengeluaran,
-            backgroundColor: '#fc8181',
-            borderColor: '#c53030',
-            borderWidth: 1
-          }
+          { label: 'Pemasukan', data: trendPemasukan, backgroundColor: palette.mint, borderColor: palette.mintDeep, borderWidth: 1 },
+          { label: 'Pengeluaran', data: trendPengeluaran, backgroundColor: palette.coral, borderColor: palette.coralDeep, borderWidth: 1 }
         ]
       },
       options: {
         responsive: true,
         plugins: {
           legend: { position: 'top' },
-          tooltip: {
-            callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.parsed.y) }
-          }
+          tooltip: { callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.parsed.y) } }
         },
         scales: {
-          y: {
-            ticks: {
-              callback: v => 'Rp ' + Number(v).toLocaleString('id-ID')
-            }
-          }
+          y: { ticks: { callback: v => 'Rp ' + Number(v).toLocaleString('id-ID') } }
         }
       }
     });

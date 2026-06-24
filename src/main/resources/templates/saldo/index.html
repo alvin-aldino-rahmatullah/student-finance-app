@@ -3,66 +3,57 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Manajemen Saldo</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Segoe UI", sans-serif; background: #f0f4f8; }
-    .navbar { background: #2b6cb0; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-    .navbar h2 { font-size: 1.1rem; }
-    .navbar a { color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.85rem; margin-left: 0.5rem; }
-    .container { max-width: 600px; margin: 2rem auto; padding: 0 1.5rem; }
-    .page-title { font-size: 1.3rem; font-weight: 700; color: #2d3748; margin-bottom: 1.5rem; }
-    .saldo-box {
-      background: linear-gradient(135deg, #2b6cb0, #4299e1);
-      color: white; border-radius: 16px; padding: 2.5rem;
-      text-align: center; margin-bottom: 2rem;
-      box-shadow: 0 4px 20px rgba(43,108,176,0.3);
-    }
-    .saldo-box .label { font-size: 0.9rem; opacity: 0.85; margin-bottom: 0.5rem; }
-    .saldo-box .nilai { font-size: 2.5rem; font-weight: 700; }
-    .form-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-    .form-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: #2b6cb0; }
-    .form-group { margin-bottom: 1rem; }
-    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #4a5568; margin-bottom: 0.4rem; }
-    .form-group input { width: 100%; padding: 0.7rem 1rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem; outline: none; }
-    .form-group input:focus { border-color: #4299e1; }
-    .btn { width: 100%; padding: 0.75rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; background: #3182ce; color: white; }
-    .btn:hover { background: #2b6cb0; }
-    .alert { padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.9rem; }
-    .alert.success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
-    .alert.error   { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
-    .nav-back { display: inline-block; margin-bottom: 1rem; color: #2b6cb0; text-decoration: none; font-size: 0.9rem; }
-  </style>
+  <title>Pengaturan Orang Tua</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
-<body>
-<div class="navbar">
-  <div><h2>💰 Keuangan Mahasiswa</h2></div>
-  <div>
-    <a th:href="@{/dashboard}">Dashboard</a>
+<body class="portal">
+<div class="navbar portal">
+  <div class="brand"><h2>Portal Orang Tua</h2></div>
+  <div class="actions">
+    <a th:href="@{/orangtua/dashboard}">Dashboard</a>
     <a th:href="@{/auth/logout}">Logout</a>
   </div>
 </div>
-<div class="container">
-  <a class="nav-back" th:href="@{/dashboard}">← Dashboard</a>
-  <div class="page-title">💰 Manajemen Saldo</div>
+
+<div class="container narrow">
+  <a class="nav-back" th:href="@{/orangtua/dashboard}">← Dashboard</a>
+  <div class="page-title">Pengaturan Akun</div>
 
   <div class="alert success" th:if="${sukses}" th:text="${sukses}"></div>
-  <div class="alert error"   th:if="${error}"  th:text="${error}"></div>
 
-  <div class="saldo-box">
-    <div class="label">Saldo Saat Ini</div>
-    <div class="nilai" th:text="'Rp ' + ${#numbers.formatInteger(saldo, 1, 'COMMA')}">Rp 0</div>
+  <!-- Info Akun -->
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <h3>Info Akun Saya</h3>
+    <div class="info-row">
+      <span class="lbl">Nama</span>
+      <span class="val" th:text="${orangTua.nama}">-</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">No HP Saya</span>
+      <span class="val" th:text="${orangTua.noHP}">-</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">No HP Mahasiswa</span>
+      <span class="val" th:text="${orangTua.noHPMahasiswa != null ? orangTua.noHPMahasiswa : 'Belum ditautkan'}">-</span>
+    </div>
   </div>
 
-  <div class="form-card">
-    <h3>+ Tambah Saldo</h3>
-    <form th:action="@{/saldo/tambah}" method="post">
+  <!-- Form Tautkan No HP Mahasiswa -->
+  <div class="card form-card">
+    <h3>Tautkan Akun Mahasiswa</h3>
+    <p style="font-size:0.85rem;color:var(--ink-soft);margin-bottom:1rem">
+      Masukkan No HP mahasiswa (anak kamu) yang sudah terdaftar di aplikasi ini.
+      Setelah ditautkan, kamu bisa memantau keuangan mereka.
+    </p>
+    <form th:action="@{/orangtua/profil/update}" method="post">
       <div class="form-group">
-        <label>Jumlah yang ingin ditambahkan (Rp)</label>
-        <input type="number" name="jumlah" min="1000" step="1000"
-               placeholder="Contoh: 500000" required/>
+        <label>No HP Mahasiswa</label>
+        <input type="text" name="noHPMahasiswa"
+               th:value="${orangTua.noHPMahasiswa}"
+               placeholder="Contoh: 08123456789" required/>
+        <div class="hint">Harus sama persis dengan No HP yang didaftarkan mahasiswa.</div>
       </div>
-      <button type="submit" class="btn">Tambah Saldo</button>
+      <button type="submit" class="btn btn-blue">Simpan</button>
     </form>
   </div>
 </div>
